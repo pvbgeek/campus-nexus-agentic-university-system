@@ -9,3 +9,5 @@ Our project is going to create an agentic system capable of managing the online 
 |          | Dana      |
 |          |           |
 |          |           |
+# Architecture
+[insert diagram here]
