@@ -6,8 +6,8 @@ Our project is going to create an agentic system capable of managing the online 
 
 | RED TEAM | BLUE TEAM |
 | -------- | --------- |
-|          | Dana      |
-|          |           |
-|          |           |
+| Dana     | Parth     |
+| Noelle   | Kavya     |
+|          | Calianna  |
 # Architecture
 [insert diagram here]
