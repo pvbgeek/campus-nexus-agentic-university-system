@@ -7,7 +7,14 @@ Our project is going to create an agentic system capable of managing the online 
 ![[diagram.png|400]] 
 This diagram demonstrates our different agents and their tasks, including 3 worker agents who handle returns, records lookup,and reply drafting, and a orchestration agent which manages the previous 3. The orchestrator agent is also the most powerful of the agents, having the most database access and largest memory. Together, these 4 agents manage the university system and handle emails, returns, and records.
 ## System User Guide
-
+The system takes input from a user about a request, be it a refund request, an email response, or an admin request to review a customer's file.
+For customers, the system works as follows:
+1. customers submit a request to an online portal
+2. Request is processed by orchestrator agent
+3. Agent combines relevant context from RAG database and sends new request to relevant sub-agent
+4. Sub-agent makes tool calls and returns response to orchestrator
+5. Orchestrator sends return response to customer
+For admin use, the system works similarly, however more strict policy enforces identity verification to access more restricted materials. 
 ## Team Member Responsibilities
 
 | RED TEAM | BLUE TEAM |
