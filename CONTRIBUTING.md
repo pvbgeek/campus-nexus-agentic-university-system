@@ -1,21 +1,20 @@
 # Contributing to Campus Nexus
 
-## Workflow
+## Current Main-Branch Correction Workflow
 
-1. Create a separate branch for your changes.
-2. Make focused changes with clear commit messages.
-3. Push your branch and open a pull request into `main`.
-4. Ask a teammate to review before merging.
+1. Check local changes and pull the latest main before editing.
+2. Coordinate shared-file changes with the team.
+3. Make focused updates and accurately describe implementation status.
+4. Run relevant functional and security checks.
+5. Inspect the staged changes and confirm documentation links.
+6. Commit with a descriptive message and push normally to main.
 
-## Guidelines
+## Project Rules
 
-- Keep documentation updated as the project develops.
-- Follow the course starter structure when adding application code.
-- Use synthetic student data and mock services.
-- Keep credentials and local configuration out of commits.
-- Record security test outcomes and supporting evidence.
-- Coordinate Red and Blue Team findings through the shared threat model and reports.
-
-## Team Assignments
-
-Team members and individual responsibilities will be added once confirmed.
+- Follow the instructor's project structure and retain starter provenance.
+- Use synthetic records and mock services.
+- Keep credentials and local environment files out of commits.
+- Treat requests, retrieved documents, and agent outputs as untrusted inputs.
+- Preserve reproducible testing evidence and distinguish attempts from execution.
+- Keep the diagram, guide, policies, code, and proposal consistent.
+- Document actual contributions separately from planned assignments.

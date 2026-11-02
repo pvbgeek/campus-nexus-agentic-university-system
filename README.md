@@ -1,54 +1,85 @@
 # Campus Nexus
-## Agentic University Management and Marketplace System
+## Enterprise Customer Support Agent
 
-Campus Nexus is a group project for **COEN 296: AI Governance and Cybersecurity**.
+Campus Nexus is a COEN 296 AI Governance and Cybersecurity capstone project.
+The target application is a browser-based Enterprise Customer Support Agent
+that processes assigned synthetic customer refund cases using specialized
+agents and mock email, records, refund, and reporting tools.
 
-The project explores an agentic university marketplace and management system where students can buy and sell books and campus essentials, manage synthetic student records, and submit support and refund requests.
+The project combines functional development with threat modeling, Red Team
+testing, defensive controls, and governance and assurance evidence.
 
-**Status:** Initial repository skeleton. Implementation and architecture design are pending.
+## Current Implementation Status
 
-## Planned Features
+The instructor-derived simulated starter runs locally. Its health endpoint,
+normal task, supplied Red Team simulation, and structured logs have been verified.
 
-- Buying and selling books and campus essentials
-- Student profile and record management using synthetic data
-- Support case submission and tracking
-- Policy-based refund processing and reporting
-- Red Team testing and Blue Team defenses
-- Security evaluation and AI governance documentation
+The complete customer-support workflow, five specialized agents, actual LLM
+integration, vector database, customer-facing browser UI, and independent
+refund authorization controls remain planned.
+
+The starter's simulated decision is not a refund approval or bank transfer.
+
+## Planned Agents
+
+| Agent | Responsibility |
+|---|---|
+| Orchestrator | Decompose requests, route work, maintain scoped task state, and aggregate results |
+| Intake | Create support cases and assign them for processing |
+| Email | Receive messages, draft replies, and send authorized acknowledgements and notifications |
+| Records | Retrieve and update assigned customer cases and synthetic profiles through scoped tools |
+| Refunds | Evaluate requests, record decisions, and request authorized mock refund processing |
+| Reporting | Report approvals, denials, pending reviews, and decision reasons |
+
+## Required Authority Limits
+
+- Maximum autonomous refund: $100 per transaction.
+- Cumulative refunds: no more than $500 in a week.
+- No export of unrelated customer records.
+- No agent modification of its own permissions.
+- No bypass of supervisor decisions.
+- No consequential actions after authority is revoked.
+- Refund issuance means updating a mock account balance using synthetic data.
+
+These are target requirements. The supplied starter does not enforce them yet.
+
+## Documentation
+
+- [Proposal-stage requirements coverage](docs/requirements-coverage.md)
+
+- [Run instructions](run_instructions.md)
+- [Initial system user guide](docs/user-guide.md)
+- [Refund policy and authority controls](docs/refund-policy.md)
+- [Team responsibilities](docs/team-responsibilities.md)
+- [Implementation status](docs/implementation-status.md)
+- [Architecture explanation](Architecture/README.md)
+- [Red Team plan](redteam/plan.md)
+- [MAESTRO mapping](threat_model/MAESTRO_mapping.md)
+- [Starter provenance](docs/starter-source.md)
 
 ## Repository Structure
 
 | Path | Purpose |
 |---|---|
-| `README.md` | Project overview, scope, status, and repository structure |
-| `Architecture/README.md` | Architecture explanation and diagram notes |
-| `Architecture/architecture.png` | Planned architecture diagram; to be added later |
-| `docs/README.md` | Documentation index for user guides and project reports |
-| `red_team/README.md` | Red Team responsibilities, testing plans, and evidence organization |
-| `blue_team/README.md` | Blue Team responsibilities, defenses, and retest documentation |
-| `CONTRIBUTING.md` | Group contribution guidelines |
-| `.gitignore` | Exclusions for local configuration and temporary files |
-| `LICENSE` | MIT license |
-
-Application code will be added following the course starter project structure.
-
-## Architecture
-
-The architecture diagram will be saved as `Architecture/architecture.png` once designed.
-
-A separate [Architecture README](Architecture/README.md) will explain the diagram, system components, and interactions.
-
-## Team Responsibilities
-
-- **Red Team:** Develop and execute authorized security tests within the project sandbox, document findings, and preserve reproducible evidence.
-- **Blue Team:** Implement defenses, monitor activity, investigate findings, and verify fixes through retesting.
-
-Both subteams will contribute to the shared threat model and final project documentation. Individual assignments will be added later.
+| app/ | Instructor-derived application baseline |
+| requirements.txt | Runtime dependencies |
+| run_demo.py | Demonstration and evidence collection |
+| run_instructions.md | Installation, startup, and verification |
+| Architecture/ | Planned architecture diagram and explanation |
+| docs/ | User guide, policy, responsibilities, status, and proposal documents |
+| redteam/ | Test plans, synthetic inputs, and recorded results |
+| blue_team/ | Defense ownership and remediation documentation |
+| threat_model/ | Shared threat model and MAESTRO mapping |
+| logs/ | Baseline structured event evidence |
+| report/ | Final report location |
+| presentation/ | Slides and demo recordings |
 
 ## Course Starter
 
-https://github.com/rafaebhatti/coen296
+https://github.com/rafaebhatti/coen296/tree/main/project
+
+Original source and local adaptations are recorded in docs/starter-source.md.
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for group contribution guidelines.
+See [CONTRIBUTING.md](CONTRIBUTING.md).

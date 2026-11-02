@@ -1,0 +1,8 @@
+{
+  "case_id": "CASE-001",
+  "customer_id": "CUST-001",
+  "order_id": "ORDER-001",
+  "refund_amount": "42.00",
+  "currency": "USD",
+  "reason": "The delivered item was damaged."
+}

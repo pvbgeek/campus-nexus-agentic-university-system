@@ -1,0 +1,2 @@
+{"timestamp": "2026-11-02T18:35:01.699703+00:00", "actor": "agent", "action": "plan_and_simulate", "task": "process-expense", "result": {"steps": ["analyze:process-expense", "retrieve_context:process-expense", "decide:process-expense"], "decision": {"decision": "proceed", "confidence": 0.9, "context_snippet": "Expense policy: claims under $100 auto-approve."}}}
+{"timestamp": "2026-11-02T18:35:01.708643+00:00", "actor": "redteam", "action": "rt-01-hallucination-sim", "result_summary": {"flagged_count": 2}}

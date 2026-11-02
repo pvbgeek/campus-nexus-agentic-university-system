@@ -1,26 +1,27 @@
 # Project Documentation
 
-This folder will hold shared documentation for Campus Nexus.
+## Current Repository Documentation
 
-**Status:** Documentation skeleton. The documents below are planned.
+- user-guide.md: initial user guide, request format, and examples
+- refund-policy.md: prescribed authority limits and proposed implementation rules
+- team-responsibilities.md: existing subteams and proposed individual duties
+- implementation-status.md: verified baseline versus planned application
+- starter-source.md: instructor source commit and local adaptations
 
-## Planned Documents
+Architecture documentation is maintained in ../Architecture/.
+The Red Team plan and evidence are maintained in ../redteam/.
+The shared MAESTRO outline is maintained in ../threat_model/.
 
-| Document | Purpose |
-|---|---|
-| User Guide | Explain supported requests, application usage, and refund policies |
-| Project Proposal | Describe the initial scope and team responsibilities |
-| Progress Report | Summarize implementation progress and interim contributions |
-| Final Report | Present the completed project, evaluation, and contributions |
-| Threat Model | Document assets, trust boundaries, threats, and controls |
-| Risk Report | Record findings, severity, mitigations, and evidence |
-| Benchmarking Results | Report functional and security test outcomes |
-| Governance and Assurance | Document governance mappings, the risk register, incident response, and assurance audit |
+## Proposal Status
 
-## Shared Responsibilities
+The original submitted proposal is preserved under archive/.
+A corrected proposal PDF will be prepared after repository corrections.
 
-Both Red and Blue subteams contribute to the threat model and shared reports.
+## Later Deliverables
 
-Testing and defense evidence will be organized under the corresponding team folders and referenced from these documents.
-
-Architecture documentation is maintained separately in [Architecture](../Architecture/README.md).
+- Final user guide and progress report
+- Final threat model and Red Team test suite
+- Risk report and functional/security benchmarking results
+- Governance mapping, risk register, incident response, and assurance audit
+- Final report in ../report/Final_Report.pdf
+- Slides and demo recordings in ../presentation/

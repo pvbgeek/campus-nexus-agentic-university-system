@@ -1,35 +1,21 @@
 # Blue Team
 
-This folder will organize defense documentation, monitoring plans, remediation notes, and retest evidence for Campus Nexus.
+Members: Parth Bhalerao, Kavya Sharma, and Calianna Collins.
 
-**Status:** Team assignments and defensive controls are pending.
+See ../docs/team-responsibilities.md for the proposed individual work allocation.
 
-## Responsibilities
+## Planned Responsibilities
 
-- Define allowed agent actions, permissions, and trust boundaries.
-- Implement controls that enforce permissions and refund policies.
-- Monitor activity and investigate security findings.
-- Remediate weaknesses and verify fixes through retesting.
-- Contribute to the shared threat model, risk report, and governance documentation.
+- Define agent authority, permissions, and trust boundaries.
+- Implement the customer-support agents and supporting tools.
+- Enforce refund limits and supervisor decisions independently of model output.
+- Protect assigned customer records, policy ingestion, and persistent memory.
+- Monitor activity and preserve decision and execution evidence.
+- Enforce revocation and plan incident containment and recovery.
+- Investigate Red Team findings, remediate, and verify legitimate workflows still work.
+- Contribute to the shared threat model and governance documentation.
 
-## Planned Defense Areas
+## Current Status
 
-- Access controls for synthetic student records
-- Refund limits and supervisor approval requirements
-- Restricted agent permissions and tool access
-- Protection against prompt injection and poisoned retrieval content
-- Audit logging and suspicious activity detection
-- Revocation of agent authority and emergency stopping
-- Incident containment and recovery
-
-## Defense Documentation
-
-Each control should record:
-
-- Purpose and the threat it addresses
-- Expected permitted and denied actions
-- Enforcement point and responsible owner
-- Test outcomes and supporting logs
-- Remediation, retest results, and remaining risks
-
-Control testing should verify both that unauthorized actions are blocked and that legitimate requests still work.
+The simulated course starter has been verified.
+The complete application and target-specific defensive controls remain planned.
