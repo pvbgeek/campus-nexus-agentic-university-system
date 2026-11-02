@@ -78,6 +78,8 @@ def arrow(a, b, both=False):
 
 def centered(y, text, face=SMALL):
     x = (W - draw.textlength(text, font=face)) / 2
+    left, top, right, bottom = draw.textbbox((x, y), text, font=face)
+    draw.rectangle((left - 12, top - 5, right + 12, bottom + 5), fill="#F7FAFC")
     draw.text((x, y), text, font=face, fill=MUTED)
 
 draw.text((60, 45), "Campus Nexus", font=TITLE, fill=NAVY)
