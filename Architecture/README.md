@@ -1,62 +1,43 @@
-# Campus Nexus Architecture
+# Current architecture
 
-Status: proposed target design. The operational code remains the simulated starter.
+![Current architecture](architecture.png)
 
-The target application is a browser-based Enterprise Customer Support Agent.
-The diagram below describes the proposed target application.
+The diagram describes the working November 12 progress build. Generate it with `python Architecture/generate_diagram.py` after installing Pillow. It produces `Architecture/architecture.png`.
 
-![Campus Nexus proposed architecture](architecture.png)
+## Browser and service boundary
 
-Rebuild it with: python Architecture/generate_diagram.py
+Customer and staff pages fetch authenticated API data. FastAPI resolves identity from an HttpOnly session cookie, enforces customer/staff permissions and protects authenticated mutations with a session-bound token. A customer can read owned orders/cases and submit a request; staff can verify evidence, decide a hold/denial, inspect reports and change refund authority.
 
-## Components
+There is one common authorized staff queue. The operational browser database is separate from the temporary databases used by automated tests.
 
-| Component | Planned responsibility |
-|---|---|
-| Browser UI | Customer case submission, status viewing, and authorized administrator/supervisor actions |
-| Orchestrator | LLM-based decomposition, routing, response aggregation, and scoped task state |
-| Intake Agent | Case creation and assignment |
-| Email Agent | Receive messages, draft replies, and request authorized sends |
-| Records Agent | Retrieve and update assigned cases and synthetic customer profiles |
-| Refunds Agent | Evaluate requests, record decisions, and request authorized processing |
-| Reporting Agent | Produce approved/denied/pending outcomes and reasons |
-| Memory | Scoped session state and persistent task notes |
-| RAG/vector database | Retrieve versioned policies and authorized case/profile context |
-| Execution gateway | Independently authorize tool operations before execution |
-| Mock tools | Case, email, records, refund/account, and reporting operations |
-| Audit store | Decision identifiers, authorization outcomes, execution outcomes, and evidence |
+## Orchestration and model calls
 
-## Planned Processing Flow
+The primary entry point is `app.main:app`, which loads the connected API in `app/web.py`. `app/workflow.py` builds a fixed LangGraph decomposition: Intake, Records, Refunds, Email and Reporting. Each role makes a real Groq request with a validated JSON schema. Intake forms the query; Records reads the bound order and policy matches; Refunds proposes an action; Email drafts a case update; Reporting produces a case summary.
 
-1. A customer submits a synthetic refund case through the browser UI.
-2. The orchestrator decomposes the request and routes case intake and assignment.
-3. Email acknowledgement is requested.
-4. Authorized policy and assigned customer/order context is retrieved.
-5. Refunds evaluates eligibility and proposes a decision.
-6. Independent controls authorize or reject any consequential operation.
-7. An authorized refund updates the synthetic account balance once.
-8. Email sends the decision notification and Reporting records the outcome.
+Groq credentials stay on the server. Customer text, model output, retrieved passages and case memory remain untrusted. State passes between graph nodes and completed stages are saved to `agent_runs`. A previous summary from the same case can be supplied as persistent memory. This is not a general adaptive planner or complete checkpoint-resume implementation.
 
-## Authority and Trust Boundaries
+## Retrieval boundary
 
-Customer messages, retrieved documents, and agent output are untrusted inputs.
-They cannot change policy, grant permissions, or authorize execution.
+FastEmbed generates 384 dimensional BAAI/bge-small-en-v1.5 embeddings on CPU. Qdrant stores approved policy passages locally. Search returns actual nearest passages, similarity scores, source hashes and point identifiers. Records output must cite identifiers present in its retrieved set.
 
-Tool access is bound to caller identity, assigned case, and explicit permissions.
-The orchestrator does not receive unrestricted database or payment authority.
+Only policy text is vector indexed today. Private case, profile/account and order data use scoped SQLite queries. Admin upload/review UI and private vector record retrieval remain pending. A policy passage cannot change the financial rules embedded in the server gateway.
 
-The execution gateway enforces transaction and weekly limits, supervisor decisions,
-revocation, and duplicate-processing protection. Supervisor actions use a separate
-authorized interface.
+## MCP and authority boundary
 
-Policy upload and retrieval require appropriate permissions and provenance.
-Customer records and persistent memory must remain scoped to authorized cases.
+The graph launches an official MCP SDK stdio subprocess with a server-bound case/run capability. It discovers tools and makes real protocol calls. The tool interface rejects unknown names and undeclared arguments. No tool accepts an arbitrary customer selector, permissions edit, shell command or refund destination.
 
-The chosen inter-agent protocol will be documented when implemented; MCP is an
-available option rather than an assumed completed integration.
+The gateway binds the proposed amount to the saved case and requires staff evidence verification, no supervisor hold and a delivery date within the team's 30 day window. Preflight facts help the model reason; they do not authorize execution.
 
-## Implementation Boundary
+Immediately before financial writes, the independent ledger rechecks ownership, positive integer cents, the $100 transaction cap, the shared $500 UTC-week cap, remaining order balance, supervisor denial, revocation and idempotency under `BEGIN IMMEDIATE`. The ledger row and synthetic account credit share that transaction.
 
-The instructor-derived starter currently demonstrates API requests, simulated
-planning/retrieval, canned-input testing, and logs. This design describes the
-complete application planned for development.
+## Storage and observations
+
+SQLite stores cases, session records, order/evidence data, mock balances, inbox messages, prior run state and audit events. The destination comes from stored account data. Mock email is saved to the bound case's inbox; no real email is sent.
+
+Case/run IDs join preflight facts, model provider identifiers/usage, MCP results, proposal rationale, authorization and actual ledger execution. Staff reports use SQL totals; model summaries are advisory. A run can finish with a hold rather than a payment. Provider failures pause processing and require checking the ledger before retrying.
+
+## Current evidence and remaining work
+
+The successful uploaded live batch contains 10 model responses, 66 audit events and one $64 ledger credit. The injected $125 request was held and did not redirect the destination. Direct ledger/MCP tests separately verify enforcement; the live model recommended denial rather than attempting a forbidden execution.
+
+The model incorrectly described authority as revoked while server authority was active. Explanation grounding remains open. Broader attacks, final benchmarks, governance assurance and hosted persistent storage are later work. See [findings](../docs/findings.md) and [implementation status](../docs/implementation-status.md).

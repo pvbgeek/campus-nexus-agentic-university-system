@@ -1,10 +1,7 @@
-# Red Team Documentation Location
+# Red Team
 
 Members: Dana Steinke and Noelle Evanich.
 
-The canonical test plan, inputs, and evidence now use the instructor's redteam/
-directory. See ../redteam/plan.md.
+The canonical tests, outline, synthetic inputs and evidence are in [redteam](../redteam/plan.md). This directory preserves the original repository naming and avoids a second competing suite.
 
-See ../docs/team-responsibilities.md for the proposed individual work allocation.
-
-This directory retains a link for compatibility with earlier project documentation.
+See [findings](../docs/findings.md) and [individual status](../docs/team-responsibilities.md). Shared test results do not imply unverified individual authorship.

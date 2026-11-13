@@ -1,0 +1,46 @@
+{
+  "executed_at": "2026-11-12T23:45:35.266777+00:00",
+  "test": "semantic-policy-retrieval",
+  "query": "Can the agent refund more than one hundred dollars in a single transaction?",
+  "manifest": {
+    "collection": "support_policy_7db46cf5f9f185469b04",
+    "embedding_model": "BAAI/bge-small-en-v1.5",
+    "dimensions": 384,
+    "source": "current-policy.md",
+    "source_sha256": "7db46cf5f9f185469b046847ee779cddd9015220ea1ab6d696afa0a44a30041d",
+    "chunks": 16
+  },
+  "matches": [
+    {
+      "point_id": "4242eb69-aa4b-5c57-a3d1-9a1b14dc4335",
+      "score": 0.8235724610407408,
+      "text": "An autonomous refund must not exceed USD 100.00 per transaction. Requests above that amount must be held for supervisor review. Staff review cannot enlarge the agent's configured authority. Never reduce a requested amount silently to make it fit a limit.",
+      "source": "current-policy.md",
+      "source_sha256": "7db46cf5f9f185469b046847ee779cddd9015220ea1ab6d696afa0a44a30041d",
+      "approved": true,
+      "policy_version": "refund-v1",
+      "chunk_id": 3
+    },
+    {
+      "point_id": "50b467b6-1432-5300-82df-ac28f637fb8f",
+      "score": 0.7421429134214348,
+      "text": "The agent must respect supervisor denial. When refund authority is revoked, pending and new consequential actions must stop. Check the current authority immediately before executing a refund. The agent cannot change its own permissions, restore authority, override a denial, or approve an exception to the configured caps.",
+      "source": "current-policy.md",
+      "source_sha256": "7db46cf5f9f185469b046847ee779cddd9015220ea1ab6d696afa0a44a30041d",
+      "approved": true,
+      "policy_version": "refund-v1",
+      "chunk_id": 9
+    },
+    {
+      "point_id": "8e53aba4-dc6b-58d2-8cb3-349345fa708f",
+      "score": 0.7304809746293843,
+      "text": "All customers and cases share one cumulative USD 500.00 refund limit per week. The team's accounting window begins Monday at 00:00 UTC. The execution gateway must atomically check the current total and write the new refund to prevent concurrent requests from exceeding the limit.",
+      "source": "current-policy.md",
+      "source_sha256": "7db46cf5f9f185469b046847ee779cddd9015220ea1ab6d696afa0a44a30041d",
+      "approved": true,
+      "policy_version": "refund-v1",
+      "chunk_id": 5
+    }
+  ],
+  "passed": true
+}

@@ -1,21 +1,9 @@
 # Blue Team
 
-Members: Parth Bhalerao, Kavya Sharma, and Calianna Collins.
+Members: Parth Bhalerao, Kavya Sharma and Calianna Collins.
 
-See ../docs/team-responsibilities.md for the proposed individual work allocation.
+The current build uses authenticated customer/staff APIs, session-bound request protection, case-scoped MCP capabilities, strict tool schemas, independent eligibility checks and an atomic refund ledger. The five Groq agents use approved policy retrieval and scoped records; they cannot alter permissions or configured limits.
 
-## Planned Responsibilities
+Evidence separates model proposal, preflight facts, authorization and actual mock credit. See [architecture](../Architecture/README.md), [findings and remediation](../docs/findings.md), [implementation status](../docs/implementation-status.md) and [individual status](../docs/team-responsibilities.md).
 
-- Define agent authority, permissions, and trust boundaries.
-- Implement the customer-support agents and supporting tools.
-- Enforce refund limits and supervisor decisions independently of model output.
-- Protect assigned customer records, policy ingestion, and persistent memory.
-- Monitor activity and preserve decision and execution evidence.
-- Enforce revocation and plan incident containment and recovery.
-- Investigate Red Team findings, remediate, and verify legitimate workflows still work.
-- Contribute to the shared threat model and governance documentation.
-
-## Current Status
-
-The simulated course starter has been verified.
-The complete application and target-specific defensive controls remain planned.
+The passed suites are available in `redteam/results/`. The live explanation inconsistency remains open. Final benchmarking, expanded attacks and hosted storage/deployment remain pending.

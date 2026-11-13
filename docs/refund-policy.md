@@ -1,56 +1,25 @@
-# Refund Policy and Authority Controls
+# Refund policy and authority controls
 
-Status: initial policy for the proposed application.
-The current starter does not implement these controls.
+Policy version: `refund-v1`. These controls apply to the synthetic support build.
 
-## Limits Prescribed by the Project Specification
+## Required authority limits
 
-1. Autonomous refunds must not exceed $100 per transaction.
-2. Cumulative refunds must not exceed $500 in a single week.
-3. The agent must not export unrelated customer records.
-4. The agent must not change its own permissions.
-5. The agent must not bypass supervisor decisions.
-6. Consequential actions must stop after authority is revoked.
+- At most $100 per autonomous transaction.
+- At most $500 cumulatively per UTC week across customers and cases.
+- No export of unrelated records, permission changes, supervisor bypass or new consequential execution after revocation.
 
-## Proposed Operational Rules
+## Team operational rules
 
-These details are team design choices for implementing the prescribed limits:
+Amounts are integer USD cents. The accounting week starts Monday at 00:00 UTC. The refund must be positive, belong to the bound customer/order and fit the remaining order balance. Its destination is the stored mock account.
 
-- Use USD and integer cents for monetary calculations.
-- Define the weekly accounting window as Monday 00:00 UTC through the next Monday.
-- Use one shared weekly ledger across cases and customers.
-- Verify customer identity and ownership of the referenced order.
-- Require a positive amount no greater than the order's remaining refundable amount.
-- Record a reason for every approval, denial, or pending review.
-- Use a unique refund identifier to prevent duplicate processing.
-- Retrieve the refund destination from the authorized synthetic customer profile,
-  rather than trusting account instructions in a customer message.
+The team accepts damaged item, incorrect item and duplicate charge reasons, requires supporting evidence to be verified by staff, and applies a 30 day delivery window. These eligibility details and the UTC week definition are team choices. Synthetic seed delivery dates are created nine days before database initialization and remain fixed thereafter.
 
-## Supervisor Review
+## Independent enforcement
 
-Requests outside autonomous authority are held for supervisor review.
-A supervisor decision must be recorded and must not be overridden by the agent.
-Review does not allow the agent to bypass the configured refund limits.
-Any separately authorized manual process is outside autonomous agent processing.
+MCP binds execution to one stored case and rejects undeclared arguments. Its gateway checks the proposed amount, staff verification, supervisor hold and delivery window. The SQLite ledger independently rechecks ownership, positive integer amount, $100/$500 caps, remaining balance, supervisor denial, active authority and idempotency immediately before financial writes. The ledger entry and mock account credit share one transaction.
 
-## Independent Enforcement
+An exact replay returns the original refund identifier without a second credit. A key reused for different details is rejected. Supervisor verification or review cannot increase limits. The current UI has no manual exception payment path.
 
-The planned execution gateway checks identity, assigned case, tool permissions,
-refund amount, weekly total, supervisor decision, revocation, and duplicate
-processing immediately before execution.
+## Evidence and interpretation
 
-Monetary checks and ledger updates must be atomic to prevent concurrent requests
-from exceeding the weekly limit.
-
-LLM output and retrieved text cannot grant authority or change these checks.
-
-## Mock Refund Processing
-
-An approved and authorized refund updates a synthetic account balance.
-No real bank transfer or external payment is made.
-
-## Audit Evidence
-
-Record case and decision identifiers, actor, requested action, authorization
-outcome, execution outcome, policy version, amount, timestamp, and reason.
-Keep unrelated profile information and credentials out of evidence exports.
+Audit records distinguish model proposal, independent authorization and actual mock execution. Run and case IDs join model usage, MCP calls, eligibility preflight, ledger trace and notifications. The model's explanation is advisory and can be wrong; staff should verify ledger facts. See [known findings](findings.md).

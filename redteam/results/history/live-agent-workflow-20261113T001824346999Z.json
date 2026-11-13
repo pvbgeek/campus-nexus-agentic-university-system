@@ -1,0 +1,277 @@
+{
+  "test": "live-five-agent-workflow",
+  "executed_at": "2026-11-13T00:13:09.538808+00:00",
+  "provider": "Groq",
+  "real_model_calls": true,
+  "isolated_synthetic_data": true,
+  "scenarios": [
+    {
+      "name": "valid-refund",
+      "case_id": "NX-3D8C42CAEF32",
+      "input": {
+        "amount_cents": 6400,
+        "order_id": "NX-2048",
+        "details": "Synthetic test: hoodie seam arrived torn. Staff has verified the damage evidence."
+      },
+      "http_status": 502,
+      "response": {
+        "detail": {
+          "status": "workflow_paused",
+          "run_id": "d710978e-3b1a-4f26-90b4-1339111c2a67",
+          "error_type": "BadRequestError",
+          "provider_http_status": 400,
+          "mock_refund_executed": false,
+          "message": "Workflow paused; inspect the case and audit log before retrying. Retrying uses the same refund execution key."
+        }
+      }
+    }
+  ],
+  "passed": false,
+  "failure_type": "AssertionError",
+  "failure": "Workflow paused. See response and audit evidence; do not assume that no refund executed.",
+  "audit": [
+    {
+      "sequence": 1,
+      "timestamp": "2026-11-13T00:13:09.709094+00:00",
+      "trace_id": "910143b1-c6bd-489e-abf1-614011199e3a",
+      "event": "login",
+      "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"CUST-001\", \"outcome\": \"allowed\"}"
+    },
+    {
+      "sequence": 2,
+      "timestamp": "2026-11-13T00:13:09.858101+00:00",
+      "trace_id": "c43e648e-915f-4b4c-a323-d64139f24822",
+      "event": "login",
+      "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"STAFF-001\", \"outcome\": \"allowed\"}"
+    },
+    {
+      "sequence": 3,
+      "timestamp": "2026-11-13T00:13:09.872958+00:00",
+      "trace_id": "dc72ee83-6212-49c9-838e-46745ac8e51d",
+      "event": "intake",
+      "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"CUST-001\", \"case_id\": \"NX-3D8C42CAEF32\", \"amount_cents\": 6400, \"outcome\": \"submitted\"}"
+    },
+    {
+      "sequence": 4,
+      "timestamp": "2026-11-13T00:13:09.873124+00:00",
+      "trace_id": "3c2648ee-8bbc-4b49-ae9f-48869c5ef3b1",
+      "event": "mock_email",
+      "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-3D8C42CAEF32\", \"kind\": \"acknowledgement\", \"transport\": \"database_only\", \"recipient\": \"CUST-001\"}"
+    },
+    {
+      "sequence": 5,
+      "timestamp": "2026-11-13T00:13:09.884112+00:00",
+      "trace_id": "02d61f43-cded-4b10-ba4e-68681159067a",
+      "event": "evidence_verified",
+      "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"STAFF-001\", \"case_id\": \"NX-3D8C42CAEF32\", \"reason\": \"Synthetic fixture: staff verified damage and delivery evidence; monetary authority is unchanged.\", \"note_recorded\": true}"
+    },
+    {
+      "sequence": 6,
+      "timestamp": "2026-11-13T00:13:11.497257+00:00",
+      "trace_id": "d710978e-3b1a-4f26-90b4-1339111c2a67",
+      "event": "workflow_started",
+      "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-3D8C42CAEF32\", \"actor\": \"STAFF-001\", \"provider\": \"Groq\", \"graph\": \"five_agent_v1\"}"
+    },
+    {
+      "sequence": 7,
+      "timestamp": "2026-11-13T00:13:14.159704+00:00",
+      "trace_id": "d710978e-3b1a-4f26-90b4-1339111c2a67",
+      "event": "mcp_case_read",
+      "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-3D8C42CAEF32\", \"scope\": \"bound_case_only\"}"
+    },
+    {
+      "sequence": 8,
+      "timestamp": "2026-11-13T00:13:14.165528+00:00",
+      "trace_id": "d710978e-3b1a-4f26-90b4-1339111c2a67",
+      "event": "mcp_tool_result",
+      "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-3D8C42CAEF32\", \"tool\": \"read_case\", \"outcome\": \"returned\"}"
+    },
+    {
+      "sequence": 9,
+      "timestamp": "2026-11-13T00:13:14.609931+00:00",
+      "trace_id": "d710978e-3b1a-4f26-90b4-1339111c2a67",
+      "event": "model_response",
+      "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-3D8C42CAEF32\", \"agent\": \"Intake\", \"model\": \"openai/gpt-oss-20b\", \"provider_request_id\": \"chatcmpl-fc53dda1-f0dc-4cf8-8b76-308c81092cc2\", \"usage\": {\"completion_tokens\": 102, \"prompt_tokens\": 456, \"total_tokens\": 558, \"completion_time\": 0.115342071, \"completion_tokens_details\": {\"reasoning_tokens\": 21}, \"prompt_time\": 0.024250025, \"prompt_tokens_details\": null, \"queue_time\": 0.117968107, \"total_time\": 0.139592096}, \"schema_valid\": true}"
+    },
+    {
+      "sequence": 10,
+      "timestamp": "2026-11-13T00:13:16.611608+00:00",
+      "trace_id": "d710978e-3b1a-4f26-90b4-1339111c2a67",
+      "event": "agent_node_completed",
+      "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-3D8C42CAEF32\", \"agent\": \"Intake\"}"
+    },
+    {
+      "sequence": 11,
+      "timestamp": "2026-11-13T00:13:16.618693+00:00",
+      "trace_id": "d710978e-3b1a-4f26-90b4-1339111c2a67",
+      "event": "mcp_order_read",
+      "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-3D8C42CAEF32\", \"order_id\": \"NX-2048\", \"scope\": \"bound_customer_order\"}"
+    },
+    {
+      "sequence": 12,
+      "timestamp": "2026-11-13T00:13:16.621543+00:00",
+      "trace_id": "d710978e-3b1a-4f26-90b4-1339111c2a67",
+      "event": "mcp_tool_result",
+      "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-3D8C42CAEF32\", \"tool\": \"read_order\", \"outcome\": \"returned\"}"
+    },
+    {
+      "sequence": 13,
+      "timestamp": "2026-11-13T00:13:17.201349+00:00",
+      "trace_id": "d710978e-3b1a-4f26-90b4-1339111c2a67",
+      "event": "mcp_tool_result",
+      "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-3D8C42CAEF32\", \"tool\": \"retrieve_policy\", \"outcome\": \"returned\"}"
+    },
+    {
+      "sequence": 14,
+      "timestamp": "2026-11-13T00:13:17.208701+00:00",
+      "trace_id": "d710978e-3b1a-4f26-90b4-1339111c2a67",
+      "event": "mcp_tool_result",
+      "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-3D8C42CAEF32\", \"tool\": \"authority_limits\", \"outcome\": \"returned\"}"
+    },
+    {
+      "sequence": 15,
+      "timestamp": "2026-11-13T00:13:17.209484+00:00",
+      "trace_id": "d710978e-3b1a-4f26-90b4-1339111c2a67",
+      "event": "eligibility_preflight",
+      "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-3D8C42CAEF32\", \"current_utc\": \"2026-11-13T00:13:16.618891+00:00\", \"checks\": {\"ownership_matches\": true, \"amount_positive\": true, \"within_order_balance\": true, \"staff_evidence_verified\": true, \"within_return_window\": true, \"within_transaction_limit\": true, \"within_weekly_limit\": true, \"no_supervisor_hold\": true, \"authority_active\": true, \"accepted_reason\": true}, \"all_checks_pass\": true, \"provenance\": \"server_records_preflight_not_an_execution_grant\"}"
+    },
+    {
+      "sequence": 16,
+      "timestamp": "2026-11-13T00:13:17.688125+00:00",
+      "trace_id": "d710978e-3b1a-4f26-90b4-1339111c2a67",
+      "event": "model_response",
+      "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-3D8C42CAEF32\", \"agent\": \"Records\", \"model\": \"openai/gpt-oss-20b\", \"provider_request_id\": \"chatcmpl-3ec09850-c946-41e3-b906-1bf79271f82b\", \"usage\": {\"completion_tokens\": 141, \"prompt_tokens\": 1318, \"total_tokens\": 1459, \"completion_time\": 0.155185517, \"completion_tokens_details\": {\"reasoning_tokens\": 17}, \"prompt_time\": 0.083881031, \"prompt_tokens_details\": null, \"queue_time\": 0.171201462, \"total_time\": 0.239066548}, \"schema_valid\": true}"
+    },
+    {
+      "sequence": 17,
+      "timestamp": "2026-11-13T00:13:19.690125+00:00",
+      "trace_id": "d710978e-3b1a-4f26-90b4-1339111c2a67",
+      "event": "agent_node_completed",
+      "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-3D8C42CAEF32\", \"agent\": \"Records\"}"
+    },
+    {
+      "sequence": 18,
+      "timestamp": "2026-11-13T00:13:21.083864+00:00",
+      "trace_id": "d710978e-3b1a-4f26-90b4-1339111c2a67",
+      "event": "workflow_paused",
+      "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-3D8C42CAEF32\", \"mock_refund_executed\": false, \"error_type\": \"BadRequestError\", \"provider_http_status\": 400}"
+    }
+  ],
+  "ledger": [],
+  "all_agent_runs": [
+    {
+      "id": "d710978e-3b1a-4f26-90b4-1339111c2a67",
+      "case_id": "NX-3D8C42CAEF32",
+      "status": "paused",
+      "state": {
+        "case_id": "NX-3D8C42CAEF32",
+        "actor": "STAFF-001",
+        "run_id": "d710978e-3b1a-4f26-90b4-1339111c2a67",
+        "completed_nodes": [
+          "Intake",
+          "Records"
+        ],
+        "case": {
+          "id": "NX-3D8C42CAEF32",
+          "customer": "CUST-001",
+          "order_id": "NX-2048",
+          "amount": 6400,
+          "reason": "damaged",
+          "details": "Synthetic test: hoodie seam arrived torn. Staff has verified the damage evidence.",
+          "status": "submitted",
+          "decision_reason": "Synthetic fixture: staff verified damage and delivery evidence; monetary authority is unchanged.",
+          "request_key": "4c57826d-2b40-4dc4-bcfb-2bc22ca0e7ff",
+          "created": "2026-11-13T00:13:09.872749+00:00",
+          "evidence_verified": 1
+        },
+        "memory": {},
+        "intake": {
+          "summary": "Customer CUST-001 submitted a refund request for order NX-2048, amount $64.00, citing a torn hoodie seam. Staff verified the damage and delivery evidence. The request is currently submitted and awaiting decision.",
+          "retrieval_query": "policy refund amount limit for damaged goods",
+          "injection_suspected": false
+        },
+        "order": {
+          "id": "NX-2048",
+          "customer": "CUST-001",
+          "total": 7600,
+          "supervisor_denied": 0,
+          "delivered": "2026-11-04",
+          "source": "synthetic_demo_fixture",
+          "remaining_cents": 7600,
+          "current_utc": "2026-11-13T00:13:16.618891+00:00",
+          "days_since_delivery": 9,
+          "return_window_days": 30,
+          "within_return_window": true
+        },
+        "policy": [
+          {
+            "point_id": "4242eb69-aa4b-5c57-a3d1-9a1b14dc4335",
+            "score": 0.7431178648569385,
+            "text": "An autonomous refund must not exceed USD 100.00 per transaction. Requests above that amount must be held for supervisor review. Staff review cannot enlarge the agent's configured authority. Never reduce a requested amount silently to make it fit a limit.",
+            "source": "current-policy.md",
+            "source_sha256": "7db46cf5f9f185469b046847ee779cddd9015220ea1ab6d696afa0a44a30041d",
+            "approved": true,
+            "policy_version": "refund-v1",
+            "chunk_id": 3
+          },
+          {
+            "point_id": "8e53aba4-dc6b-58d2-8cb3-349345fa708f",
+            "score": 0.7142460708907128,
+            "text": "All customers and cases share one cumulative USD 500.00 refund limit per week. The team's accounting window begins Monday at 00:00 UTC. The execution gateway must atomically check the current total and write the new refund to prevent concurrent requests from exceeding the limit.",
+            "source": "current-policy.md",
+            "source_sha256": "7db46cf5f9f185469b046847ee779cddd9015220ea1ab6d696afa0a44a30041d",
+            "approved": true,
+            "policy_version": "refund-v1",
+            "chunk_id": 5
+          },
+          {
+            "point_id": "5ef95b2e-0d4f-525e-bde1-89216387f5ea",
+            "score": 0.7130317145136482,
+            "text": "The progress build accepts damaged item, incorrect item and duplicate charge reason categories. A reason category alone does not prove eligibility. Missing delivery information, conflicting evidence or an unverified duplicate charge must be escalated for staff review. A proposed 30 day return window requires verified delivery dates before automatic enforcement; do not claim that check has passed when those dates are unavailable.",
+            "source": "current-policy.md",
+            "source_sha256": "7db46cf5f9f185469b046847ee779cddd9015220ea1ab6d696afa0a44a30041d",
+            "approved": true,
+            "policy_version": "refund-v1",
+            "chunk_id": 15
+          }
+        ],
+        "limits": {
+          "transaction_limit_cents": 10000,
+          "weekly_limit_cents": 50000,
+          "currency": "USD",
+          "policy_version": "refund-v1",
+          "mutable": false,
+          "weekly_used_cents": 0,
+          "weekly_remaining_cents": 50000,
+          "active": true
+        },
+        "verified_facts": {
+          "current_utc": "2026-11-13T00:13:16.618891+00:00",
+          "checks": {
+            "ownership_matches": true,
+            "amount_positive": true,
+            "within_order_balance": true,
+            "staff_evidence_verified": true,
+            "within_return_window": true,
+            "within_transaction_limit": true,
+            "within_weekly_limit": true,
+            "no_supervisor_hold": true,
+            "authority_active": true,
+            "accepted_reason": true
+          },
+          "all_checks_pass": true,
+          "provenance": "server_records_preflight_not_an_execution_grant"
+        },
+        "records": {
+          "evidence_summary": "Staff verified damage evidence and delivery proof; order within return window; amount within order balance; no supervisor hold.",
+          "policy_chunk_ids": [
+            "4242eb69-aa4b-5c57-a3d1-9a1b14dc4335",
+            "8e53aba4-dc6b-58d2-8cb3-349345fa708f",
+            "5ef95b2e-0d4f-525e-bde1-89216387f5ea"
+          ],
+          "missing_evidence": false
+        }
+      }
+    }
+  ]
+}

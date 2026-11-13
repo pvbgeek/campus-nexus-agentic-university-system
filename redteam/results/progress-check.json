@@ -1,0 +1,34 @@
+{
+  "executed_at": "2026-11-13T00:18:07.102638+00:00",
+  "stages": [
+    {
+      "name": "Refund boundary controls",
+      "script": "redteam/test_refund_controls.py",
+      "exit_code": 0
+    },
+    {
+      "name": "API and real MCP security controls",
+      "script": "redteam/test_api_controls.py",
+      "exit_code": 0
+    },
+    {
+      "name": "Real MCP policy retrieval",
+      "script": "scripts/verify_retrieval_mcp.py",
+      "exit_code": 0
+    },
+    {
+      "name": "Graph and tool integration with a labelled model test double",
+      "script": "redteam/test_graph_integration.py",
+      "exit_code": 0
+    },
+    {
+      "name": "Live Groq workflows and prompt injection",
+      "script": "scripts/verify_live_workflow.py",
+      "exit_code": 0
+    }
+  ],
+  "passed": true,
+  "reused_control_results_from": "2026-11-13T00:12:51.876391+00:00",
+  "live_evidence": "redteam/results/live-agent-workflow.json",
+  "audit_jsonl": "logs/progress-live-audit.jsonl"
+}

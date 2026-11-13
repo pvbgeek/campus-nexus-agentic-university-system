@@ -1,80 +1,28 @@
-# Run Instructions
+# Run instructions
 
-## Prerequisites
+The primary entry point is now `app.main:app`, serving the connected application.
 
-- Python 3.10 or newer
-- Git
-- Windows Git Bash or a compatible shell
-
-Run commands from the Campus Nexus repository root.
-
-## Windows Git Bash Setup
+Follow [the User Guide](docs/user-guide.md) for complete setup and workflows. Linux and macOS commands:
 
 ```bash
-python -m venv .venv
-source .venv/Scripts/activate
-python -m pip install -r requirements.txt
+uv venv --python 3.12 .venv-agent
+uv pip install --python .venv-agent/bin/python -r requirements-agents.lock.txt
+.venv-agent/bin/python scripts/configure_groq.py
+.venv-agent/bin/python scripts/build_policy_index.py
+.venv-agent/bin/python scripts/init_local.py
+.venv-agent/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
-On Linux/macOS, activate with source .venv/bin/activate instead.
+Open http://127.0.0.1:8000 and use the generated local demo credentials in ignored `data/demo-login.txt`. Keep the server terminal open. Stop it with Ctrl+C. On Windows use `.venv-agent/Scripts/python.exe` instead of `.venv-agent/bin/python`.
 
-## Automatic Baseline Demonstration
+Run current verification separately from the repository root:
 
 ```bash
-python run_demo.py --base-url http://127.0.0.1:8016 --start-server --out redteam/results/starter-baseline.json
+.venv-agent/bin/python scripts/check_progress.py
 ```
 
-The demo checks health, submits the instructor's sample task, runs its supplied
-Red Team simulation, retrieves logs, saves evidence, and stops its server.
+The test suite uses isolated synthetic databases. It does not populate the browser's operational database. Test results and live audit exports are saved in `redteam/results/` and `logs/progress-live-audit.jsonl`.
 
-Use an unused local port. The automatic startup detects an occupied port.
+The legacy `run_demo.py` walkthrough targets the preserved instructor simulation, not the connected application. Historical starter results are baseline evidence only. Do not use that walkthrough as the current application verification command.
 
-## Manual Server and Browser Exploration
-
-```bash
-python -m uvicorn app.main:app --host 127.0.0.1 --port 8016
-```
-
-Open http://127.0.0.1:8016/docs in a browser.
-
-From a second activated terminal, run:
-
-```bash
-python run_demo.py --base-url http://127.0.0.1:8016 --out redteam/results/starter-baseline.json
-```
-
-Stop a manually started server with Ctrl+C.
-
-## Baseline Endpoints
-
-| Method | Endpoint | Purpose |
-|---|---|---|
-| GET | /health | Identify the running simulated starter |
-| POST | /tasks | Plan and simulate a supplied task |
-| POST | /tests/rt-01 | Run the supplied canned-input simulation |
-| GET | /logs | Retrieve structured baseline events |
-
-## Evidence
-
-- redteam/results/starter-baseline.json
-- redteam/results/RT-01/rt-01-results.json
-- logs/events.jsonl
-
-The two supplied Red Team inputs should be flagged. Successful endpoint responses
-are HTTP 200. Inspect response content as well as status codes.
-
-## Limitations
-
-The baseline is simulated. It does not implement the complete refund-support
-application, actual LLM calls, a vector database, or independent refund authorization.
-
-See docs/implementation-status.md and docs/starter-source.md.
-
-## Rebuild the Architecture Diagram
-
-Diagram-generation dependencies are separate from runtime requirements.
-
-```bash
-python -m pip install -r requirements-dev.txt
-python Architecture/generate_diagram.py
-```
+Keys, credentials, sessions, local databases, model caches and source backups are ignored. Keep the development listener on loopback. No Vercel or other hosted deployment is required for this local progress demonstration.

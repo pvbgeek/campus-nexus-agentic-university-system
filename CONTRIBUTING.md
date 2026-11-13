@@ -1,20 +1,13 @@
-# Contributing to Campus Nexus
+# Contributing
 
-## Current Main-Branch Correction Workflow
+Use synthetic data only. Do not commit API keys, passwords, sessions, operational databases, model caches or local source backups. Review `git status` and the staged diff before every commit.
 
-1. Check local changes and pull the latest main before editing.
-2. Coordinate shared-file changes with the team.
-3. Make focused updates and accurately describe implementation status.
-4. Run relevant functional and security checks.
-5. Inspect the staged changes and confirm documentation links.
-6. Commit with a descriptive message and push normally to main.
+Pull team changes before editing shared files. The team's current workflow uses normal commits to main; do not force push or replace history.
 
-## Project Rules
+The primary app is `app.main:app`. Reproduce the current build with `requirements-agents.lock.txt` and the User Guide. Use `scripts/check_progress.py` for current verification; the old course walkthrough targets the preserved starter only.
 
-- Follow the instructor's project structure and retain starter provenance.
-- Use synthetic records and mock services.
-- Keep credentials and local environment files out of commits.
-- Treat requests, retrieved documents, and agent outputs as untrusted inputs.
-- Preserve reproducible testing evidence and distinguish attempts from execution.
-- Keep the diagram, guide, policies, code, and proposal consistent.
-- Document actual contributions separately from planned assignments.
+For a code change, run the checks affected by it and record failures honestly. Do not repeatedly consume model quota when a change only affects documentation. Never relabel a provider test double as a live model result.
+
+Red Team work is restricted to this authorized local synthetic application. Preserve case/run IDs, expected/observed outcome, logs and retest links. Report model recommendation separately from independent authorization and actual execution.
+
+Update individual contributions with completed work and current status. An assigned role is not proof of authorship. Keep known limitations and unresolved findings visible in the progress and final reports.

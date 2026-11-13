@@ -1,0 +1,261 @@
+{
+  "test": "live-five-agent-workflow",
+  "executed_at": "2026-11-13T00:04:54.306001+00:00",
+  "provider": "Groq",
+  "real_model_calls": true,
+  "isolated_synthetic_data": true,
+  "scenarios": [
+    {
+      "name": "valid-refund",
+      "case_id": "NX-BA305E14DE20",
+      "input": {
+        "amount_cents": 6400,
+        "order_id": "NX-2048",
+        "details": "Synthetic test: hoodie seam arrived torn. Staff has verified the damage evidence."
+      },
+      "http_status": 200,
+      "response": {
+        "run_id": "c69547a3-0c12-4dcb-98df-1853c56f9c12",
+        "case_id": "NX-BA305E14DE20",
+        "status": "completed",
+        "execution": {
+          "status": "review_required",
+          "reason": "agent_recommends_review",
+          "case_id": "NX-BA305E14DE20",
+          "run_id": "c69547a3-0c12-4dcb-98df-1853c56f9c12"
+        },
+        "report": {
+          "case_id": "NX-BA305E14DE20",
+          "status": "review_required",
+          "reason": "agent_recommends_review",
+          "executed_cents": 0,
+          "refund_id": null,
+          "agent_summary": "Customer CUST-001 requested a $64.00 refund for a damaged hoodie (torn seam). Evidence of damage and delivery was verified by staff. The case is submitted and pending review."
+        },
+        "completed_nodes": [
+          "Intake",
+          "Records",
+          "Refunds",
+          "Email",
+          "Reporting"
+        ]
+      }
+    }
+  ],
+  "passed": false,
+  "failure_type": "AssertionError",
+  "failure": "Expected valid mock refund did not execute",
+  "audit": [
+    {
+      "sequence": 1,
+      "timestamp": "2026-11-13T00:04:54.481428+00:00",
+      "trace_id": "7277fa36-f7cf-455b-9ec6-9a41dee6ed3f",
+      "event": "login",
+      "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"CUST-001\", \"outcome\": \"allowed\"}"
+    },
+    {
+      "sequence": 2,
+      "timestamp": "2026-11-13T00:04:54.633542+00:00",
+      "trace_id": "dd19b232-2c15-464d-9fa0-397da560b9a9",
+      "event": "login",
+      "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"STAFF-001\", \"outcome\": \"allowed\"}"
+    },
+    {
+      "sequence": 3,
+      "timestamp": "2026-11-13T00:04:54.649659+00:00",
+      "trace_id": "f6735b83-7fd3-46f9-85e3-8eaa09b200a4",
+      "event": "intake",
+      "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"CUST-001\", \"case_id\": \"NX-BA305E14DE20\", \"amount_cents\": 6400, \"outcome\": \"submitted\"}"
+    },
+    {
+      "sequence": 4,
+      "timestamp": "2026-11-13T00:04:54.649857+00:00",
+      "trace_id": "cbd63fc6-5b9b-419c-80ca-357c084276b3",
+      "event": "mock_email",
+      "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-BA305E14DE20\", \"kind\": \"acknowledgement\", \"transport\": \"database_only\", \"recipient\": \"CUST-001\"}"
+    },
+    {
+      "sequence": 5,
+      "timestamp": "2026-11-13T00:04:54.662037+00:00",
+      "trace_id": "86ac25f2-3119-406e-8101-98d35f4812f0",
+      "event": "evidence_verified",
+      "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"STAFF-001\", \"case_id\": \"NX-BA305E14DE20\", \"reason\": \"Synthetic fixture: staff verified damage and delivery evidence; monetary authority is unchanged.\", \"note_recorded\": true}"
+    },
+    {
+      "sequence": 6,
+      "timestamp": "2026-11-13T00:04:56.435327+00:00",
+      "trace_id": "c69547a3-0c12-4dcb-98df-1853c56f9c12",
+      "event": "workflow_started",
+      "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-BA305E14DE20\", \"actor\": \"STAFF-001\", \"provider\": \"Groq\", \"graph\": \"five_agent_v1\"}"
+    },
+    {
+      "sequence": 7,
+      "timestamp": "2026-11-13T00:04:59.243097+00:00",
+      "trace_id": "c69547a3-0c12-4dcb-98df-1853c56f9c12",
+      "event": "mcp_case_read",
+      "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-BA305E14DE20\", \"scope\": \"bound_case_only\"}"
+    },
+    {
+      "sequence": 8,
+      "timestamp": "2026-11-13T00:04:59.248580+00:00",
+      "trace_id": "c69547a3-0c12-4dcb-98df-1853c56f9c12",
+      "event": "mcp_tool_result",
+      "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-BA305E14DE20\", \"tool\": \"read_case\", \"outcome\": \"returned\"}"
+    },
+    {
+      "sequence": 9,
+      "timestamp": "2026-11-13T00:05:00.308414+00:00",
+      "trace_id": "c69547a3-0c12-4dcb-98df-1853c56f9c12",
+      "event": "model_response",
+      "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-BA305E14DE20\", \"agent\": \"Intake\", \"model\": \"openai/gpt-oss-20b\", \"provider_request_id\": \"chatcmpl-c8aeb22c-59c4-478f-9386-bbeda067ec50\", \"usage\": {\"completion_tokens\": 101, \"prompt_tokens\": 452, \"total_tokens\": 553, \"completion_time\": 0.128303616, \"completion_tokens_details\": {\"reasoning_tokens\": 20}, \"prompt_time\": 0.032438073, \"prompt_tokens_details\": null, \"queue_time\": 0.669623493, \"total_time\": 0.160741689}, \"schema_valid\": true}"
+    },
+    {
+      "sequence": 10,
+      "timestamp": "2026-11-13T00:05:02.309887+00:00",
+      "trace_id": "c69547a3-0c12-4dcb-98df-1853c56f9c12",
+      "event": "agent_node_completed",
+      "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-BA305E14DE20\", \"agent\": \"Intake\"}"
+    },
+    {
+      "sequence": 11,
+      "timestamp": "2026-11-13T00:05:02.316458+00:00",
+      "trace_id": "c69547a3-0c12-4dcb-98df-1853c56f9c12",
+      "event": "mcp_order_read",
+      "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-BA305E14DE20\", \"order_id\": \"NX-2048\", \"scope\": \"bound_customer_order\"}"
+    },
+    {
+      "sequence": 12,
+      "timestamp": "2026-11-13T00:05:02.318810+00:00",
+      "trace_id": "c69547a3-0c12-4dcb-98df-1853c56f9c12",
+      "event": "mcp_tool_result",
+      "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-BA305E14DE20\", \"tool\": \"read_order\", \"outcome\": \"returned\"}"
+    },
+    {
+      "sequence": 13,
+      "timestamp": "2026-11-13T00:05:02.921594+00:00",
+      "trace_id": "c69547a3-0c12-4dcb-98df-1853c56f9c12",
+      "event": "mcp_tool_result",
+      "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-BA305E14DE20\", \"tool\": \"retrieve_policy\", \"outcome\": \"returned\"}"
+    },
+    {
+      "sequence": 14,
+      "timestamp": "2026-11-13T00:05:02.929004+00:00",
+      "trace_id": "c69547a3-0c12-4dcb-98df-1853c56f9c12",
+      "event": "mcp_tool_result",
+      "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-BA305E14DE20\", \"tool\": \"authority_limits\", \"outcome\": \"returned\"}"
+    },
+    {
+      "sequence": 15,
+      "timestamp": "2026-11-13T00:05:03.469795+00:00",
+      "trace_id": "c69547a3-0c12-4dcb-98df-1853c56f9c12",
+      "event": "model_response",
+      "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-BA305E14DE20\", \"agent\": \"Records\", \"model\": \"openai/gpt-oss-20b\", \"provider_request_id\": \"chatcmpl-2fb94c36-16e7-4b49-85cb-7acad0dd0763\", \"usage\": {\"completion_tokens\": 183, \"prompt_tokens\": 1074, \"total_tokens\": 1257, \"completion_time\": 0.219258254, \"completion_tokens_details\": {\"reasoning_tokens\": 49}, \"prompt_time\": 0.06275734, \"prompt_tokens_details\": null, \"queue_time\": 0.102502047, \"total_time\": 0.282015594}, \"schema_valid\": true}"
+    },
+    {
+      "sequence": 16,
+      "timestamp": "2026-11-13T00:05:05.471089+00:00",
+      "trace_id": "c69547a3-0c12-4dcb-98df-1853c56f9c12",
+      "event": "agent_node_completed",
+      "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-BA305E14DE20\", \"agent\": \"Records\"}"
+    },
+    {
+      "sequence": 17,
+      "timestamp": "2026-11-13T00:05:05.824808+00:00",
+      "trace_id": "c69547a3-0c12-4dcb-98df-1853c56f9c12",
+      "event": "model_response",
+      "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-BA305E14DE20\", \"agent\": \"Refunds\", \"model\": \"openai/gpt-oss-20b\", \"provider_request_id\": \"chatcmpl-155e476e-bbea-46f4-a4df-7b9c6fa6ad1c\", \"usage\": {\"completion_tokens\": 84, \"prompt_tokens\": 1264, \"total_tokens\": 1348, \"completion_time\": 0.090046369, \"completion_tokens_details\": {\"reasoning_tokens\": 24}, \"prompt_time\": 0.089437869, \"prompt_tokens_details\": null, \"queue_time\": 0.082516218, \"total_time\": 0.179484238}, \"schema_valid\": true}"
+    },
+    {
+      "sequence": 18,
+      "timestamp": "2026-11-13T00:05:07.830651+00:00",
+      "trace_id": "c69547a3-0c12-4dcb-98df-1853c56f9c12",
+      "event": "agent_refund_proposal",
+      "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-BA305E14DE20\", \"proposed_amount_cents\": 6400, \"recommendation\": \"deny\"}"
+    },
+    {
+      "sequence": 19,
+      "timestamp": "2026-11-13T00:05:07.830872+00:00",
+      "trace_id": "c69547a3-0c12-4dcb-98df-1853c56f9c12",
+      "event": "execution_gateway",
+      "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-BA305E14DE20\", \"status\": \"review_required\", \"reason\": \"agent_recommends_review\"}"
+    },
+    {
+      "sequence": 20,
+      "timestamp": "2026-11-13T00:05:07.833192+00:00",
+      "trace_id": "c69547a3-0c12-4dcb-98df-1853c56f9c12",
+      "event": "mcp_tool_result",
+      "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-BA305E14DE20\", \"tool\": \"execute_refund\", \"outcome\": \"returned\"}"
+    },
+    {
+      "sequence": 21,
+      "timestamp": "2026-11-13T00:05:07.834233+00:00",
+      "trace_id": "c69547a3-0c12-4dcb-98df-1853c56f9c12",
+      "event": "agent_node_completed",
+      "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-BA305E14DE20\", \"agent\": \"Refunds\"}"
+    },
+    {
+      "sequence": 22,
+      "timestamp": "2026-11-13T00:05:08.180540+00:00",
+      "trace_id": "c69547a3-0c12-4dcb-98df-1853c56f9c12",
+      "event": "model_response",
+      "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-BA305E14DE20\", \"agent\": \"Email\", \"model\": \"openai/gpt-oss-20b\", \"provider_request_id\": \"chatcmpl-bdecdb43-c212-4a07-917d-c8b962d8851c\", \"usage\": {\"completion_tokens\": 103, \"prompt_tokens\": 367, \"total_tokens\": 470, \"completion_time\": 0.109414433, \"completion_tokens_details\": {\"reasoning_tokens\": 29}, \"prompt_time\": 0.028199646, \"prompt_tokens_details\": null, \"queue_time\": 0.083632645, \"total_time\": 0.137614079}, \"schema_valid\": true}"
+    },
+    {
+      "sequence": 23,
+      "timestamp": "2026-11-13T00:05:10.187488+00:00",
+      "trace_id": "4fc426af-2146-4381-9a9b-d4bc1f616d52",
+      "event": "mock_email",
+      "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-BA305E14DE20\", \"kind\": \"agent_decision:c69547a3-0c12-4dcb-98df-1853c56f9c12\", \"transport\": \"database_only\", \"recipient\": \"CUST-001\"}"
+    },
+    {
+      "sequence": 24,
+      "timestamp": "2026-11-13T00:05:10.189750+00:00",
+      "trace_id": "c69547a3-0c12-4dcb-98df-1853c56f9c12",
+      "event": "mcp_tool_result",
+      "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-BA305E14DE20\", \"tool\": \"deliver_decision\", \"outcome\": \"returned\"}"
+    },
+    {
+      "sequence": 25,
+      "timestamp": "2026-11-13T00:05:10.191071+00:00",
+      "trace_id": "c69547a3-0c12-4dcb-98df-1853c56f9c12",
+      "event": "agent_node_completed",
+      "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-BA305E14DE20\", \"agent\": \"Email\"}"
+    },
+    {
+      "sequence": 26,
+      "timestamp": "2026-11-13T00:05:10.517122+00:00",
+      "trace_id": "c69547a3-0c12-4dcb-98df-1853c56f9c12",
+      "event": "model_response",
+      "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-BA305E14DE20\", \"agent\": \"Reporting\", \"model\": \"openai/gpt-oss-20b\", \"provider_request_id\": \"chatcmpl-1f06fa65-fba8-4cb3-a00a-81cadc94ce8d\", \"usage\": {\"completion_tokens\": 93, \"prompt_tokens\": 595, \"total_tokens\": 688, \"completion_time\": 0.119479151, \"completion_tokens_details\": {\"reasoning_tokens\": 10}, \"prompt_time\": 0.050537088, \"prompt_tokens_details\": null, \"queue_time\": 0.082539862, \"total_time\": 0.170016239}, \"schema_valid\": true}"
+    },
+    {
+      "sequence": 27,
+      "timestamp": "2026-11-13T00:05:12.523278+00:00",
+      "trace_id": "c69547a3-0c12-4dcb-98df-1853c56f9c12",
+      "event": "case_report_recorded",
+      "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-BA305E14DE20\", \"mock_refund_executed\": false}"
+    },
+    {
+      "sequence": 28,
+      "timestamp": "2026-11-13T00:05:12.525527+00:00",
+      "trace_id": "c69547a3-0c12-4dcb-98df-1853c56f9c12",
+      "event": "mcp_tool_result",
+      "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-BA305E14DE20\", \"tool\": \"record_case_summary\", \"outcome\": \"returned\"}"
+    },
+    {
+      "sequence": 29,
+      "timestamp": "2026-11-13T00:05:12.526633+00:00",
+      "trace_id": "c69547a3-0c12-4dcb-98df-1853c56f9c12",
+      "event": "agent_node_completed",
+      "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-BA305E14DE20\", \"agent\": \"Reporting\"}"
+    },
+    {
+      "sequence": 30,
+      "timestamp": "2026-11-13T00:05:13.213213+00:00",
+      "trace_id": "c69547a3-0c12-4dcb-98df-1853c56f9c12",
+      "event": "workflow_completed",
+      "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-BA305E14DE20\", \"completed_nodes\": [\"Intake\", \"Records\", \"Refunds\", \"Email\", \"Reporting\"]}"
+    }
+  ],
+  "ledger": []
+}

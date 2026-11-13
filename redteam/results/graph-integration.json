@@ -1,0 +1,68 @@
+{
+  "passed": true,
+  "real_model_calls": false,
+  "model_provider": "test_double",
+  "mcp_transport": "real_stdio",
+  "vector_retrieval": "real_qdrant_fastembed",
+  "result": {
+    "run_id": "edf70a9c-75dc-44c4-958e-b9ae29378af7",
+    "case_id": "TEST-6a2275af21024920a040df0e9f391593",
+    "status": "completed",
+    "execution": {
+      "case_id": "TEST-6a2275af21024920a040df0e9f391593",
+      "run_id": "edf70a9c-75dc-44c4-958e-b9ae29378af7",
+      "status": "executed",
+      "reason": "within_authority",
+      "trace_id": "9412dbca-1068-4a73-a8a2-4acf888e2460",
+      "refund_id": "297c751e-d347-4e70-84c5-d69759046f93",
+      "amount_cents": 6400,
+      "order_remaining_cents": 1200
+    },
+    "report": {
+      "case_id": "TEST-6a2275af21024920a040df0e9f391593",
+      "status": "executed",
+      "reason": "within_authority",
+      "executed_cents": 6400,
+      "refund_id": "297c751e-d347-4e70-84c5-d69759046f93",
+      "agent_summary": "Synthetic case processed"
+    },
+    "agent_recommendation": {
+      "action": "execute",
+      "proposed_amount_cents": 6400,
+      "reason": "Within authority"
+    },
+    "verified_facts": {
+      "current_utc": "2026-11-13T00:18:13.940591+00:00",
+      "checks": {
+        "ownership_matches": true,
+        "amount_positive": true,
+        "within_order_balance": true,
+        "staff_evidence_verified": true,
+        "within_return_window": true,
+        "within_transaction_limit": true,
+        "within_weekly_limit": true,
+        "no_supervisor_hold": true,
+        "authority_active": true,
+        "accepted_reason": true
+      },
+      "all_checks_pass": true,
+      "provenance": "server_records_preflight_not_an_execution_grant"
+    },
+    "records_assessment": {
+      "evidence_summary": "Verified synthetic order",
+      "policy_chunk_ids": [
+        "a2adb25f-48cb-5982-a041-7228e2bace0f",
+        "226986aa-a7ff-5949-bd44-aca3afe36575",
+        "50b467b6-1432-5300-82df-ac28f637fb8f"
+      ],
+      "missing_evidence": false
+    },
+    "completed_nodes": [
+      "Intake",
+      "Records",
+      "Refunds",
+      "Email",
+      "Reporting"
+    ]
+  }
+}

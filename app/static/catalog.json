@@ -1,0 +1,38 @@
+[
+  {
+    "sku": "UCS-001",
+    "name": "UCS Everyday Hoodie",
+    "description": "Cardinal / Cotton fleece",
+    "price_cents": 6400,
+    "currency": "USD",
+    "image": "assets/hoodie.png",
+    "alt": "UCS Everyday Hoodie, Cardinal / Cotton fleece"
+  },
+  {
+    "sku": "UCS-002",
+    "name": "Campus Canvas Tote",
+    "description": "Natural / Everyday carry",
+    "price_cents": 2400,
+    "currency": "USD",
+    "image": "assets/tote.png",
+    "alt": "Campus Canvas Tote, Natural / Everyday carry"
+  },
+  {
+    "sku": "UCS-003",
+    "name": "Study Break Mug",
+    "description": "Ivory / 12 oz ceramic",
+    "price_cents": 1800,
+    "currency": "USD",
+    "image": "assets/mug.png",
+    "alt": "Study Break Mug, Ivory / 12 oz ceramic"
+  },
+  {
+    "sku": "UCS-004",
+    "name": "Lecture Notes Journal",
+    "description": "Cardinal / Ruled pages",
+    "price_cents": 1200,
+    "currency": "USD",
+    "image": "assets/notebook.png",
+    "alt": "Lecture Notes Journal, Cardinal / Ruled pages"
+  }
+]

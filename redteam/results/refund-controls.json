@@ -1,0 +1,720 @@
+{
+  "suite": "refund-controls-v1",
+  "scope": "Local deterministic ledger controls; no LLM or browser tests",
+  "tests_run": 13,
+  "passed": true,
+  "failures": [],
+  "scenarios": [
+    {
+      "test_id": "__main__.RefundControls.test_concurrent_duplicate",
+      "observed": [
+        {
+          "status": "executed",
+          "reason": "within_authority",
+          "trace_id": "9684e878-dd08-4ada-92d1-24ff9e35da16",
+          "refund_id": "e5fb1643-4bcb-47c6-84b0-85ce08065419",
+          "amount_cents": 6400,
+          "order_remaining_cents": 1200
+        },
+        {
+          "status": "replayed",
+          "reason": "already_executed",
+          "trace_id": "24413b8c-db17-40a4-857b-7fd639ef1998",
+          "refund_id": "e5fb1643-4bcb-47c6-84b0-85ce08065419"
+        }
+      ],
+      "audit": [
+        {
+          "sequence": 1,
+          "timestamp": "2026-11-13T00:04:09.077495+00:00",
+          "trace_id": "9684e878-dd08-4ada-92d1-24ff9e35da16",
+          "event": "refund_attempt",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"actor\": \"CUST-001\", \"order_id\": \"NX-2048\", \"amount_cents\": 6400}"
+        },
+        {
+          "sequence": 2,
+          "timestamp": "2026-11-13T00:04:09.078158+00:00",
+          "trace_id": "9684e878-dd08-4ada-92d1-24ff9e35da16",
+          "event": "authorization",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"status\": \"allowed\", \"reason\": \"within_authority\"}"
+        },
+        {
+          "sequence": 3,
+          "timestamp": "2026-11-13T00:04:09.078374+00:00",
+          "trace_id": "9684e878-dd08-4ada-92d1-24ff9e35da16",
+          "event": "mock_refund_executed",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"refund_id\": \"e5fb1643-4bcb-47c6-84b0-85ce08065419\", \"amount_cents\": 6400, \"destination\": \"mock-account-0042\", \"order_remaining_cents\": 1200, \"weekly_used_cents\": 6400}"
+        },
+        {
+          "sequence": 4,
+          "timestamp": "2026-11-13T00:04:09.078891+00:00",
+          "trace_id": "24413b8c-db17-40a4-857b-7fd639ef1998",
+          "event": "refund_attempt",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"actor\": \"CUST-001\", \"order_id\": \"NX-2048\", \"amount_cents\": 6400}"
+        },
+        {
+          "sequence": 5,
+          "timestamp": "2026-11-13T00:04:09.079263+00:00",
+          "trace_id": "24413b8c-db17-40a4-857b-7fd639ef1998",
+          "event": "authorization",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"status\": \"replayed\", \"reason\": \"already_executed\"}"
+        }
+      ],
+      "ledger": [
+        {
+          "id": "e5fb1643-4bcb-47c6-84b0-85ce08065419",
+          "customer": "CUST-001",
+          "order_id": "NX-2048",
+          "amount": 6400,
+          "week": "2026-11-09",
+          "request_key": "same-key"
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.RefundControls.test_concurrent_weekly_limit",
+      "observed": [
+        {
+          "status": "executed",
+          "reason": "within_authority",
+          "trace_id": "a96643a9-97b6-4583-8281-aa85d390b681",
+          "refund_id": "e9f5a06e-b6e6-43d6-b6d6-de28172f77c8",
+          "amount_cents": 4000,
+          "order_remaining_cents": 16000
+        },
+        {
+          "status": "review_required",
+          "reason": "weekly_limit",
+          "trace_id": "5b5a149c-89ef-4fa5-8efa-0000ccc3258a"
+        }
+      ],
+      "audit": [
+        {
+          "sequence": 1,
+          "timestamp": "2026-11-13T00:04:09.084026+00:00",
+          "trace_id": "a96643a9-97b6-4583-8281-aa85d390b681",
+          "event": "refund_attempt",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"actor\": \"CUST-001\", \"order_id\": \"NX-2049\", \"amount_cents\": 4000}"
+        },
+        {
+          "sequence": 2,
+          "timestamp": "2026-11-13T00:04:09.084542+00:00",
+          "trace_id": "a96643a9-97b6-4583-8281-aa85d390b681",
+          "event": "authorization",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"status\": \"allowed\", \"reason\": \"within_authority\"}"
+        },
+        {
+          "sequence": 3,
+          "timestamp": "2026-11-13T00:04:09.084681+00:00",
+          "trace_id": "a96643a9-97b6-4583-8281-aa85d390b681",
+          "event": "mock_refund_executed",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"refund_id\": \"e9f5a06e-b6e6-43d6-b6d6-de28172f77c8\", \"amount_cents\": 4000, \"destination\": \"mock-account-0042\", \"order_remaining_cents\": 16000, \"weekly_used_cents\": 49000}"
+        },
+        {
+          "sequence": 4,
+          "timestamp": "2026-11-13T00:04:09.085232+00:00",
+          "trace_id": "5b5a149c-89ef-4fa5-8efa-0000ccc3258a",
+          "event": "refund_attempt",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"actor\": \"CUST-001\", \"order_id\": \"NX-2049\", \"amount_cents\": 4000}"
+        },
+        {
+          "sequence": 5,
+          "timestamp": "2026-11-13T00:04:09.085618+00:00",
+          "trace_id": "5b5a149c-89ef-4fa5-8efa-0000ccc3258a",
+          "event": "authorization",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"status\": \"review_required\", \"reason\": \"weekly_limit\"}"
+        }
+      ],
+      "ledger": [
+        {
+          "id": "e9f5a06e-b6e6-43d6-b6d6-de28172f77c8",
+          "customer": "CUST-001",
+          "order_id": "NX-2049",
+          "amount": 4000,
+          "week": "2026-11-09",
+          "request_key": "race-a"
+        },
+        {
+          "id": "fixture",
+          "customer": "FIXTURE",
+          "order_id": "HISTORICAL",
+          "amount": 45000,
+          "week": "2026-11-09",
+          "request_key": "fixture"
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.RefundControls.test_cross_customer_access",
+      "observed": [
+        {
+          "status": "blocked",
+          "reason": "order_not_accessible",
+          "trace_id": "9d2316ac-cead-4d20-8bb3-2277c809565d"
+        }
+      ],
+      "audit": [
+        {
+          "sequence": 1,
+          "timestamp": "2026-11-13T00:04:09.089419+00:00",
+          "trace_id": "9d2316ac-cead-4d20-8bb3-2277c809565d",
+          "event": "refund_attempt",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"actor\": \"CUST-002\", \"order_id\": \"NX-2048\", \"amount_cents\": 6400}"
+        },
+        {
+          "sequence": 2,
+          "timestamp": "2026-11-13T00:04:09.089761+00:00",
+          "trace_id": "9d2316ac-cead-4d20-8bb3-2277c809565d",
+          "event": "authorization",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"status\": \"blocked\", \"reason\": \"order_not_accessible\"}"
+        }
+      ],
+      "ledger": []
+    },
+    {
+      "test_id": "__main__.RefundControls.test_duplicate_conflict",
+      "observed": [
+        {
+          "status": "executed",
+          "reason": "within_authority",
+          "trace_id": "f409f4c4-7eb1-4c15-ac72-46d152c0ae6c",
+          "refund_id": "62932d18-d909-413c-bea9-af59bc62e095",
+          "amount_cents": 6400,
+          "order_remaining_cents": 1200
+        },
+        {
+          "status": "blocked",
+          "reason": "idempotency_conflict",
+          "trace_id": "f182d2a2-d375-4e1f-a0b6-59acd8be8cb6"
+        }
+      ],
+      "audit": [
+        {
+          "sequence": 1,
+          "timestamp": "2026-11-13T00:04:09.093056+00:00",
+          "trace_id": "f409f4c4-7eb1-4c15-ac72-46d152c0ae6c",
+          "event": "refund_attempt",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"actor\": \"CUST-001\", \"order_id\": \"NX-2048\", \"amount_cents\": 6400}"
+        },
+        {
+          "sequence": 2,
+          "timestamp": "2026-11-13T00:04:09.093447+00:00",
+          "trace_id": "f409f4c4-7eb1-4c15-ac72-46d152c0ae6c",
+          "event": "authorization",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"status\": \"allowed\", \"reason\": \"within_authority\"}"
+        },
+        {
+          "sequence": 3,
+          "timestamp": "2026-11-13T00:04:09.093576+00:00",
+          "trace_id": "f409f4c4-7eb1-4c15-ac72-46d152c0ae6c",
+          "event": "mock_refund_executed",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"refund_id\": \"62932d18-d909-413c-bea9-af59bc62e095\", \"amount_cents\": 6400, \"destination\": \"mock-account-0042\", \"order_remaining_cents\": 1200, \"weekly_used_cents\": 6400}"
+        },
+        {
+          "sequence": 4,
+          "timestamp": "2026-11-13T00:04:09.093908+00:00",
+          "trace_id": "f182d2a2-d375-4e1f-a0b6-59acd8be8cb6",
+          "event": "refund_attempt",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"actor\": \"CUST-001\", \"order_id\": \"NX-2048\", \"amount_cents\": 1200}"
+        },
+        {
+          "sequence": 5,
+          "timestamp": "2026-11-13T00:04:09.094161+00:00",
+          "trace_id": "f182d2a2-d375-4e1f-a0b6-59acd8be8cb6",
+          "event": "authorization",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"status\": \"blocked\", \"reason\": \"idempotency_conflict\"}"
+        }
+      ],
+      "ledger": [
+        {
+          "id": "62932d18-d909-413c-bea9-af59bc62e095",
+          "customer": "CUST-001",
+          "order_id": "NX-2048",
+          "amount": 6400,
+          "week": "2026-11-09",
+          "request_key": "request-1"
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.RefundControls.test_duplicate_replay",
+      "observed": [
+        {
+          "status": "executed",
+          "reason": "within_authority",
+          "trace_id": "df22695d-ffad-4547-80a6-5ea806dcb1e4",
+          "refund_id": "4282bbfe-00ca-4758-b000-66c7240a2e91",
+          "amount_cents": 6400,
+          "order_remaining_cents": 1200
+        },
+        {
+          "status": "replayed",
+          "reason": "already_executed",
+          "trace_id": "83e2852a-46e9-4cc6-9f3b-0619312277ea",
+          "refund_id": "4282bbfe-00ca-4758-b000-66c7240a2e91"
+        }
+      ],
+      "audit": [
+        {
+          "sequence": 1,
+          "timestamp": "2026-11-13T00:04:09.097134+00:00",
+          "trace_id": "df22695d-ffad-4547-80a6-5ea806dcb1e4",
+          "event": "refund_attempt",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"actor\": \"CUST-001\", \"order_id\": \"NX-2048\", \"amount_cents\": 6400}"
+        },
+        {
+          "sequence": 2,
+          "timestamp": "2026-11-13T00:04:09.097728+00:00",
+          "trace_id": "df22695d-ffad-4547-80a6-5ea806dcb1e4",
+          "event": "authorization",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"status\": \"allowed\", \"reason\": \"within_authority\"}"
+        },
+        {
+          "sequence": 3,
+          "timestamp": "2026-11-13T00:04:09.097868+00:00",
+          "trace_id": "df22695d-ffad-4547-80a6-5ea806dcb1e4",
+          "event": "mock_refund_executed",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"refund_id\": \"4282bbfe-00ca-4758-b000-66c7240a2e91\", \"amount_cents\": 6400, \"destination\": \"mock-account-0042\", \"order_remaining_cents\": 1200, \"weekly_used_cents\": 6400}"
+        },
+        {
+          "sequence": 4,
+          "timestamp": "2026-11-13T00:04:09.098264+00:00",
+          "trace_id": "83e2852a-46e9-4cc6-9f3b-0619312277ea",
+          "event": "refund_attempt",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"actor\": \"CUST-001\", \"order_id\": \"NX-2048\", \"amount_cents\": 6400}"
+        },
+        {
+          "sequence": 5,
+          "timestamp": "2026-11-13T00:04:09.098541+00:00",
+          "trace_id": "83e2852a-46e9-4cc6-9f3b-0619312277ea",
+          "event": "authorization",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"status\": \"replayed\", \"reason\": \"already_executed\"}"
+        }
+      ],
+      "ledger": [
+        {
+          "id": "4282bbfe-00ca-4758-b000-66c7240a2e91",
+          "customer": "CUST-001",
+          "order_id": "NX-2048",
+          "amount": 6400,
+          "week": "2026-11-09",
+          "request_key": "request-1"
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.RefundControls.test_exact_transaction_limit",
+      "observed": [
+        {
+          "status": "executed",
+          "reason": "within_authority",
+          "trace_id": "03c7c787-745b-4d34-81a9-384bd7788ddb",
+          "refund_id": "afa21ba6-b479-4be3-9c7b-7a65ccda80e7",
+          "amount_cents": 10000,
+          "order_remaining_cents": 10000
+        }
+      ],
+      "audit": [
+        {
+          "sequence": 1,
+          "timestamp": "2026-11-13T00:04:09.102113+00:00",
+          "trace_id": "03c7c787-745b-4d34-81a9-384bd7788ddb",
+          "event": "refund_attempt",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"actor\": \"CUST-001\", \"order_id\": \"NX-2049\", \"amount_cents\": 10000}"
+        },
+        {
+          "sequence": 2,
+          "timestamp": "2026-11-13T00:04:09.102500+00:00",
+          "trace_id": "03c7c787-745b-4d34-81a9-384bd7788ddb",
+          "event": "authorization",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"status\": \"allowed\", \"reason\": \"within_authority\"}"
+        },
+        {
+          "sequence": 3,
+          "timestamp": "2026-11-13T00:04:09.102629+00:00",
+          "trace_id": "03c7c787-745b-4d34-81a9-384bd7788ddb",
+          "event": "mock_refund_executed",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"refund_id\": \"afa21ba6-b479-4be3-9c7b-7a65ccda80e7\", \"amount_cents\": 10000, \"destination\": \"mock-account-0042\", \"order_remaining_cents\": 10000, \"weekly_used_cents\": 10000}"
+        }
+      ],
+      "ledger": [
+        {
+          "id": "afa21ba6-b479-4be3-9c7b-7a65ccda80e7",
+          "customer": "CUST-001",
+          "order_id": "NX-2049",
+          "amount": 10000,
+          "week": "2026-11-09",
+          "request_key": "request-1"
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.RefundControls.test_invalid_amounts",
+      "observed": [
+        {
+          "status": "blocked",
+          "reason": "invalid_amount",
+          "trace_id": "71c3053d-32e9-4641-ad38-5b23a95143e5"
+        },
+        {
+          "status": "blocked",
+          "reason": "invalid_amount",
+          "trace_id": "a8571d37-2f4a-4cca-b594-86c89e544603"
+        },
+        {
+          "status": "blocked",
+          "reason": "invalid_amount",
+          "trace_id": "47b56f90-718a-4a47-a91a-9b1b5c1d06b8"
+        },
+        {
+          "status": "blocked",
+          "reason": "invalid_amount",
+          "trace_id": "72683bd0-a53c-46d1-bfc8-895f0fc3e19d"
+        },
+        {
+          "status": "blocked",
+          "reason": "invalid_amount",
+          "trace_id": "77695a71-d51b-4694-9470-e1014fe31ee9"
+        }
+      ],
+      "audit": [
+        {
+          "sequence": 1,
+          "timestamp": "2026-11-13T00:04:09.105887+00:00",
+          "trace_id": "71c3053d-32e9-4641-ad38-5b23a95143e5",
+          "event": "refund_attempt",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"actor\": \"CUST-001\", \"order_id\": \"NX-2048\", \"amount_cents\": 0}"
+        },
+        {
+          "sequence": 2,
+          "timestamp": "2026-11-13T00:04:09.106171+00:00",
+          "trace_id": "71c3053d-32e9-4641-ad38-5b23a95143e5",
+          "event": "authorization",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"status\": \"blocked\", \"reason\": \"invalid_amount\"}"
+        },
+        {
+          "sequence": 3,
+          "timestamp": "2026-11-13T00:04:09.106565+00:00",
+          "trace_id": "a8571d37-2f4a-4cca-b594-86c89e544603",
+          "event": "refund_attempt",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"actor\": \"CUST-001\", \"order_id\": \"NX-2048\", \"amount_cents\": -1}"
+        },
+        {
+          "sequence": 4,
+          "timestamp": "2026-11-13T00:04:09.106771+00:00",
+          "trace_id": "a8571d37-2f4a-4cca-b594-86c89e544603",
+          "event": "authorization",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"status\": \"blocked\", \"reason\": \"invalid_amount\"}"
+        },
+        {
+          "sequence": 5,
+          "timestamp": "2026-11-13T00:04:09.107028+00:00",
+          "trace_id": "47b56f90-718a-4a47-a91a-9b1b5c1d06b8",
+          "event": "refund_attempt",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"actor\": \"CUST-001\", \"order_id\": \"NX-2048\", \"amount_cents\": 1.5}"
+        },
+        {
+          "sequence": 6,
+          "timestamp": "2026-11-13T00:04:09.107206+00:00",
+          "trace_id": "47b56f90-718a-4a47-a91a-9b1b5c1d06b8",
+          "event": "authorization",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"status\": \"blocked\", \"reason\": \"invalid_amount\"}"
+        },
+        {
+          "sequence": 7,
+          "timestamp": "2026-11-13T00:04:09.107470+00:00",
+          "trace_id": "72683bd0-a53c-46d1-bfc8-895f0fc3e19d",
+          "event": "refund_attempt",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"actor\": \"CUST-001\", \"order_id\": \"NX-2048\", \"amount_cents\": true}"
+        },
+        {
+          "sequence": 8,
+          "timestamp": "2026-11-13T00:04:09.107638+00:00",
+          "trace_id": "72683bd0-a53c-46d1-bfc8-895f0fc3e19d",
+          "event": "authorization",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"status\": \"blocked\", \"reason\": \"invalid_amount\"}"
+        },
+        {
+          "sequence": 9,
+          "timestamp": "2026-11-13T00:04:09.107876+00:00",
+          "trace_id": "77695a71-d51b-4694-9470-e1014fe31ee9",
+          "event": "refund_attempt",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"actor\": \"CUST-001\", \"order_id\": \"NX-2048\", \"amount_cents\": \"6400\"}"
+        },
+        {
+          "sequence": 10,
+          "timestamp": "2026-11-13T00:04:09.108040+00:00",
+          "trace_id": "77695a71-d51b-4694-9470-e1014fe31ee9",
+          "event": "authorization",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"status\": \"blocked\", \"reason\": \"invalid_amount\"}"
+        }
+      ],
+      "ledger": []
+    },
+    {
+      "test_id": "__main__.RefundControls.test_remaining_balance",
+      "observed": [
+        {
+          "status": "executed",
+          "reason": "within_authority",
+          "trace_id": "50670ab2-b8cc-4186-b72e-e4c13e16c50c",
+          "refund_id": "404daada-71d8-427f-bb86-97d79f1694d7",
+          "amount_cents": 6400,
+          "order_remaining_cents": 1200
+        },
+        {
+          "status": "blocked",
+          "reason": "order_balance_exceeded",
+          "trace_id": "ca7f2bd4-d6bb-476d-b64e-5ce678bea257"
+        }
+      ],
+      "audit": [
+        {
+          "sequence": 1,
+          "timestamp": "2026-11-13T00:04:09.112727+00:00",
+          "trace_id": "50670ab2-b8cc-4186-b72e-e4c13e16c50c",
+          "event": "refund_attempt",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"actor\": \"CUST-001\", \"order_id\": \"NX-2048\", \"amount_cents\": 6400}"
+        },
+        {
+          "sequence": 2,
+          "timestamp": "2026-11-13T00:04:09.113139+00:00",
+          "trace_id": "50670ab2-b8cc-4186-b72e-e4c13e16c50c",
+          "event": "authorization",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"status\": \"allowed\", \"reason\": \"within_authority\"}"
+        },
+        {
+          "sequence": 3,
+          "timestamp": "2026-11-13T00:04:09.113278+00:00",
+          "trace_id": "50670ab2-b8cc-4186-b72e-e4c13e16c50c",
+          "event": "mock_refund_executed",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"refund_id\": \"404daada-71d8-427f-bb86-97d79f1694d7\", \"amount_cents\": 6400, \"destination\": \"mock-account-0042\", \"order_remaining_cents\": 1200, \"weekly_used_cents\": 6400}"
+        },
+        {
+          "sequence": 4,
+          "timestamp": "2026-11-13T00:04:09.114079+00:00",
+          "trace_id": "ca7f2bd4-d6bb-476d-b64e-5ce678bea257",
+          "event": "refund_attempt",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"actor\": \"CUST-001\", \"order_id\": \"NX-2048\", \"amount_cents\": 1201}"
+        },
+        {
+          "sequence": 5,
+          "timestamp": "2026-11-13T00:04:09.114499+00:00",
+          "trace_id": "ca7f2bd4-d6bb-476d-b64e-5ce678bea257",
+          "event": "authorization",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"status\": \"blocked\", \"reason\": \"order_balance_exceeded\"}"
+        }
+      ],
+      "ledger": [
+        {
+          "id": "404daada-71d8-427f-bb86-97d79f1694d7",
+          "customer": "CUST-001",
+          "order_id": "NX-2048",
+          "amount": 6400,
+          "week": "2026-11-09",
+          "request_key": "request-1"
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.RefundControls.test_revoked_authority",
+      "observed": [
+        {
+          "status": "blocked",
+          "reason": "authority_revoked",
+          "trace_id": "dfa9ac1e-a5ab-4af3-858a-dccce6f44eff"
+        }
+      ],
+      "audit": [
+        {
+          "sequence": 1,
+          "timestamp": "2026-11-13T00:04:09.117996+00:00",
+          "trace_id": "dfa9ac1e-a5ab-4af3-858a-dccce6f44eff",
+          "event": "refund_attempt",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"actor\": \"CUST-001\", \"order_id\": \"NX-2048\", \"amount_cents\": 6400}"
+        },
+        {
+          "sequence": 2,
+          "timestamp": "2026-11-13T00:04:09.118280+00:00",
+          "trace_id": "dfa9ac1e-a5ab-4af3-858a-dccce6f44eff",
+          "event": "authorization",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"status\": \"blocked\", \"reason\": \"authority_revoked\"}"
+        }
+      ],
+      "ledger": []
+    },
+    {
+      "test_id": "__main__.RefundControls.test_supervisor_denial",
+      "observed": [
+        {
+          "status": "blocked",
+          "reason": "supervisor_denied",
+          "trace_id": "150ab3d8-5188-4f66-ac04-144c32b7993d"
+        }
+      ],
+      "audit": [
+        {
+          "sequence": 1,
+          "timestamp": "2026-11-13T00:04:09.121427+00:00",
+          "trace_id": "150ab3d8-5188-4f66-ac04-144c32b7993d",
+          "event": "refund_attempt",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"actor\": \"CUST-001\", \"order_id\": \"NX-2048\", \"amount_cents\": 6400}"
+        },
+        {
+          "sequence": 2,
+          "timestamp": "2026-11-13T00:04:09.121690+00:00",
+          "trace_id": "150ab3d8-5188-4f66-ac04-144c32b7993d",
+          "event": "authorization",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"status\": \"blocked\", \"reason\": \"supervisor_denied\"}"
+        }
+      ],
+      "ledger": []
+    },
+    {
+      "test_id": "__main__.RefundControls.test_transaction_limit",
+      "observed": [
+        {
+          "status": "review_required",
+          "reason": "transaction_limit",
+          "trace_id": "ce6b51d0-1f89-4ef8-bf3f-2907db8ff97c"
+        }
+      ],
+      "audit": [
+        {
+          "sequence": 1,
+          "timestamp": "2026-11-13T00:04:09.125195+00:00",
+          "trace_id": "ce6b51d0-1f89-4ef8-bf3f-2907db8ff97c",
+          "event": "refund_attempt",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"actor\": \"CUST-001\", \"order_id\": \"NX-2049\", \"amount_cents\": 10001}"
+        },
+        {
+          "sequence": 2,
+          "timestamp": "2026-11-13T00:04:09.125503+00:00",
+          "trace_id": "ce6b51d0-1f89-4ef8-bf3f-2907db8ff97c",
+          "event": "authorization",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"status\": \"review_required\", \"reason\": \"transaction_limit\"}"
+        }
+      ],
+      "ledger": []
+    },
+    {
+      "test_id": "__main__.RefundControls.test_valid_refund",
+      "observed": [
+        {
+          "status": "executed",
+          "reason": "within_authority",
+          "trace_id": "56710f06-af65-45e7-b0a4-ce852a0bbfc2",
+          "refund_id": "1c4ddc34-bb84-4535-8a2a-ddb6265d4d53",
+          "amount_cents": 6400,
+          "order_remaining_cents": 1200
+        }
+      ],
+      "audit": [
+        {
+          "sequence": 1,
+          "timestamp": "2026-11-13T00:04:09.128564+00:00",
+          "trace_id": "56710f06-af65-45e7-b0a4-ce852a0bbfc2",
+          "event": "refund_attempt",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"actor\": \"CUST-001\", \"order_id\": \"NX-2048\", \"amount_cents\": 6400}"
+        },
+        {
+          "sequence": 2,
+          "timestamp": "2026-11-13T00:04:09.128922+00:00",
+          "trace_id": "56710f06-af65-45e7-b0a4-ce852a0bbfc2",
+          "event": "authorization",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"status\": \"allowed\", \"reason\": \"within_authority\"}"
+        },
+        {
+          "sequence": 3,
+          "timestamp": "2026-11-13T00:04:09.129053+00:00",
+          "trace_id": "56710f06-af65-45e7-b0a4-ce852a0bbfc2",
+          "event": "mock_refund_executed",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"refund_id\": \"1c4ddc34-bb84-4535-8a2a-ddb6265d4d53\", \"amount_cents\": 6400, \"destination\": \"mock-account-0042\", \"order_remaining_cents\": 1200, \"weekly_used_cents\": 6400}"
+        }
+      ],
+      "ledger": [
+        {
+          "id": "1c4ddc34-bb84-4535-8a2a-ddb6265d4d53",
+          "customer": "CUST-001",
+          "order_id": "NX-2048",
+          "amount": 6400,
+          "week": "2026-11-09",
+          "request_key": "request-1"
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.RefundControls.test_weekly_limit",
+      "observed": [
+        {
+          "status": "review_required",
+          "reason": "weekly_limit",
+          "trace_id": "ca54dc7a-4ce9-4ace-a7d8-c732717e3e7f"
+        },
+        {
+          "status": "executed",
+          "reason": "within_authority",
+          "trace_id": "d0ef0d52-5755-4dae-887b-380b5fdbb665",
+          "refund_id": "0ffdef1d-ad47-4342-9461-ee386b9de7ea",
+          "amount_cents": 1000,
+          "order_remaining_cents": 6600
+        }
+      ],
+      "audit": [
+        {
+          "sequence": 1,
+          "timestamp": "2026-11-13T00:04:09.133080+00:00",
+          "trace_id": "ca54dc7a-4ce9-4ace-a7d8-c732717e3e7f",
+          "event": "refund_attempt",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"actor\": \"CUST-001\", \"order_id\": \"NX-2048\", \"amount_cents\": 1001}"
+        },
+        {
+          "sequence": 2,
+          "timestamp": "2026-11-13T00:04:09.133459+00:00",
+          "trace_id": "ca54dc7a-4ce9-4ace-a7d8-c732717e3e7f",
+          "event": "authorization",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"status\": \"review_required\", \"reason\": \"weekly_limit\"}"
+        },
+        {
+          "sequence": 3,
+          "timestamp": "2026-11-13T00:04:09.133751+00:00",
+          "trace_id": "d0ef0d52-5755-4dae-887b-380b5fdbb665",
+          "event": "refund_attempt",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"actor\": \"CUST-001\", \"order_id\": \"NX-2048\", \"amount_cents\": 1000}"
+        },
+        {
+          "sequence": 4,
+          "timestamp": "2026-11-13T00:04:09.134053+00:00",
+          "trace_id": "d0ef0d52-5755-4dae-887b-380b5fdbb665",
+          "event": "authorization",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"status\": \"allowed\", \"reason\": \"within_authority\"}"
+        },
+        {
+          "sequence": 5,
+          "timestamp": "2026-11-13T00:04:09.134188+00:00",
+          "trace_id": "d0ef0d52-5755-4dae-887b-380b5fdbb665",
+          "event": "mock_refund_executed",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": null, \"refund_id\": \"0ffdef1d-ad47-4342-9461-ee386b9de7ea\", \"amount_cents\": 1000, \"destination\": \"mock-account-0042\", \"order_remaining_cents\": 6600, \"weekly_used_cents\": 50000}"
+        }
+      ],
+      "ledger": [
+        {
+          "id": "0ffdef1d-ad47-4342-9461-ee386b9de7ea",
+          "customer": "CUST-001",
+          "order_id": "NX-2048",
+          "amount": 1000,
+          "week": "2026-11-09",
+          "request_key": "exact"
+        },
+        {
+          "id": "fixture",
+          "customer": "FIXTURE",
+          "order_id": "HISTORICAL",
+          "amount": 49000,
+          "week": "2026-11-09",
+          "request_key": "fixture"
+        }
+      ]
+    }
+  ]
+}

@@ -1,27 +1,13 @@
-# Project Documentation
+# Documentation
 
-## Current Repository Documentation
+- [User Guide](user-guide.md): setup, customer/staff workflows, request format, policy and troubleshooting.
+- [Implementation status](implementation-status.md): working features, verified results and remaining work.
+- [Refund policy](refund-policy.md): authority limits and team operational choices.
+- [Findings](findings.md): remediation, functional failures and open explanation issue.
+- [Team responsibilities](team-responsibilities.md): allocation and confirmed individual status.
+- [Architecture](../Architecture/README.md): current PNG and detailed description.
+- [Red Team outline](../redteam/plan.md) and [threat outline](../threat_model/MAESTRO_mapping.md).
+- [Progress report](../report/Progress_Report.pdf).
+- [UI handoff](ui/HANDOFF.md): original design packet and assets; reference storefront pages are not a complete commerce system.
 
-- user-guide.md: initial user guide, request format, and examples
-- refund-policy.md: prescribed authority limits and proposed implementation rules
-- team-responsibilities.md: existing subteams and proposed individual duties
-- implementation-status.md: verified baseline versus planned application
-- starter-source.md: instructor source commit and local adaptations
-
-Architecture documentation is maintained in ../Architecture/.
-The Red Team plan and evidence are maintained in ../redteam/.
-The shared MAESTRO outline is maintained in ../threat_model/.
-
-## Proposal Status
-
-The original submitted proposal is preserved under archive/.
-A corrected proposal PDF will be prepared after repository corrections.
-
-## Later Deliverables
-
-- Final user guide and progress report
-- Final threat model and Red Team test suite
-- Risk report and functional/security benchmarking results
-- Governance mapping, risk register, incident response, and assurance audit
-- Final report in ../report/Final_Report.pdf
-- Slides and demo recordings in ../presentation/
+The original proposal and diagram remain under `archive/`. The connected application and actual evidence take precedence over old planning descriptions.

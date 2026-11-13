@@ -1,0 +1,24 @@
+{
+  "executed_at": "2026-11-12T23:45:16.133138+00:00",
+  "test": "live-groq-connection",
+  "passed": true,
+  "provider": "Groq",
+  "model": "openai/gpt-oss-20b",
+  "request_id": "chatcmpl-165ffdee-5f6f-4cb5-94ec-931f0c31e88a",
+  "usage": {
+    "completion_tokens": 26,
+    "prompt_tokens": 120,
+    "total_tokens": 146,
+    "completion_time": 0.029306545,
+    "completion_tokens_details": {
+      "reasoning_tokens": 12
+    },
+    "prompt_time": 0.007915006,
+    "prompt_tokens_details": null,
+    "queue_time": 0.167251411,
+    "total_time": 0.037221551
+  },
+  "verified_response": {
+    "status": "ok"
+  }
+}

@@ -1,0 +1,1235 @@
+{
+  "suite": "api-mcp-boundaries-v1",
+  "passed": true,
+  "tests_run": 19,
+  "model_calls": false,
+  "scenarios": [
+    {
+      "test_id": "__main__.Controls.test_authentication_required",
+      "observed": [
+        {
+          "path": "/api/orders",
+          "http": 401
+        },
+        {
+          "path": "/api/cases",
+          "http": 401
+        },
+        {
+          "path": "/api/reports",
+          "http": 401
+        },
+        {
+          "path": "/api/audit",
+          "http": 401
+        }
+      ],
+      "audit": [],
+      "ledger": [],
+      "accounts": [
+        {
+          "customer": "CUST-001",
+          "balance": 0
+        },
+        {
+          "customer": "CUST-002",
+          "balance": 0
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.Controls.test_cross_case_read",
+      "observed": [
+        {
+          "action": "create_case",
+          "http": 200,
+          "response": {
+            "case_id": "NX-B05A2EA8FEC8",
+            "status": "submitted"
+          }
+        },
+        {
+          "http": 404,
+          "action": "cross_customer_case_read"
+        }
+      ],
+      "audit": [
+        {
+          "sequence": 1,
+          "timestamp": "2026-11-13T00:04:11.919281+00:00",
+          "trace_id": "8cb174cd-ecc1-40c0-b9b7-b26557071b36",
+          "event": "login",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"CUST-001\", \"outcome\": \"allowed\"}"
+        },
+        {
+          "sequence": 2,
+          "timestamp": "2026-11-13T00:04:11.933945+00:00",
+          "trace_id": "9d22805f-2743-4148-a677-31141bbd5151",
+          "event": "intake",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"CUST-001\", \"case_id\": \"NX-B05A2EA8FEC8\", \"amount_cents\": 6400, \"outcome\": \"submitted\"}"
+        },
+        {
+          "sequence": 3,
+          "timestamp": "2026-11-13T00:04:11.934125+00:00",
+          "trace_id": "2b090d5f-0536-4e8f-a7af-c30c057c9b03",
+          "event": "mock_email",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-B05A2EA8FEC8\", \"kind\": \"acknowledgement\", \"transport\": \"database_only\", \"recipient\": \"CUST-001\"}"
+        },
+        {
+          "sequence": 4,
+          "timestamp": "2026-11-13T00:04:12.086976+00:00",
+          "trace_id": "8fbb1f4f-7a60-4a7a-818f-7ff40e3bda78",
+          "event": "login",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"CUST-002\", \"outcome\": \"allowed\"}"
+        },
+        {
+          "sequence": 5,
+          "timestamp": "2026-11-13T00:04:12.098476+00:00",
+          "trace_id": "a494e2f1-1a2f-45a6-999a-9ce3e49097da",
+          "event": "case_access",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"CUST-002\", \"case_id\": \"NX-B05A2EA8FEC8\", \"outcome\": \"blocked\"}"
+        }
+      ],
+      "ledger": [],
+      "accounts": [
+        {
+          "customer": "CUST-001",
+          "balance": 0
+        },
+        {
+          "customer": "CUST-002",
+          "balance": 0
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.Controls.test_cross_order_submission",
+      "observed": [
+        {
+          "action": "create_case",
+          "http": 404,
+          "response": {
+            "detail": "Order not found"
+          }
+        }
+      ],
+      "audit": [
+        {
+          "sequence": 6,
+          "timestamp": "2026-11-13T00:04:12.271113+00:00",
+          "trace_id": "525e4811-30cd-4f3c-bf49-0d8fa109ecc1",
+          "event": "login",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"CUST-001\", \"outcome\": \"allowed\"}"
+        },
+        {
+          "sequence": 7,
+          "timestamp": "2026-11-13T00:04:12.281433+00:00",
+          "trace_id": "3753d181-0bc9-496d-b6f4-1d64ea176d63",
+          "event": "order_access",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"CUST-001\", \"order_id\": \"NX-2050\", \"outcome\": \"blocked\"}"
+        }
+      ],
+      "ledger": [],
+      "accounts": [
+        {
+          "customer": "CUST-001",
+          "balance": 0
+        },
+        {
+          "customer": "CUST-002",
+          "balance": 0
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.Controls.test_csrf_required",
+      "observed": [
+        {
+          "http": 403,
+          "action": "missing_csrf"
+        }
+      ],
+      "audit": [
+        {
+          "sequence": 8,
+          "timestamp": "2026-11-13T00:04:12.432622+00:00",
+          "trace_id": "38416029-ce01-4e05-8143-2f440e4bf496",
+          "event": "login",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"CUST-001\", \"outcome\": \"allowed\"}"
+        }
+      ],
+      "ledger": [],
+      "accounts": [
+        {
+          "customer": "CUST-001",
+          "balance": 0
+        },
+        {
+          "customer": "CUST-002",
+          "balance": 0
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.Controls.test_customer_cannot_change_authority",
+      "observed": [
+        {
+          "http": 403,
+          "action": "customer_authority_change"
+        }
+      ],
+      "audit": [
+        {
+          "sequence": 9,
+          "timestamp": "2026-11-13T00:04:12.590319+00:00",
+          "trace_id": "38d77b0e-84a4-4744-a726-de968929febc",
+          "event": "login",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"CUST-001\", \"outcome\": \"allowed\"}"
+        },
+        {
+          "sequence": 10,
+          "timestamp": "2026-11-13T00:04:12.600612+00:00",
+          "trace_id": "f70bf5c1-bc8e-4262-ae03-64836670f499",
+          "event": "staff_access",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"CUST-001\", \"outcome\": \"blocked\"}"
+        }
+      ],
+      "ledger": [],
+      "accounts": [
+        {
+          "customer": "CUST-001",
+          "balance": 0
+        },
+        {
+          "customer": "CUST-002",
+          "balance": 0
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.Controls.test_customer_cannot_process_as_staff",
+      "observed": [
+        {
+          "action": "create_case",
+          "http": 200,
+          "response": {
+            "case_id": "NX-A624FB772BC3",
+            "status": "submitted"
+          }
+        },
+        {
+          "http": 403,
+          "action": "customer_staff_route"
+        }
+      ],
+      "audit": [
+        {
+          "sequence": 11,
+          "timestamp": "2026-11-13T00:04:12.750197+00:00",
+          "trace_id": "0db798b5-f0e5-49a7-8a80-f43ea8aadf09",
+          "event": "login",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"CUST-001\", \"outcome\": \"allowed\"}"
+        },
+        {
+          "sequence": 12,
+          "timestamp": "2026-11-13T00:04:12.761647+00:00",
+          "trace_id": "9a9a281e-c5f8-41c7-84fc-0b575a679c27",
+          "event": "intake",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"CUST-001\", \"case_id\": \"NX-A624FB772BC3\", \"amount_cents\": 6400, \"outcome\": \"submitted\"}"
+        },
+        {
+          "sequence": 13,
+          "timestamp": "2026-11-13T00:04:12.761810+00:00",
+          "trace_id": "e303ea5e-adf1-4e8a-b2c0-125f51e4ddb0",
+          "event": "mock_email",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-A624FB772BC3\", \"kind\": \"acknowledgement\", \"transport\": \"database_only\", \"recipient\": \"CUST-001\"}"
+        },
+        {
+          "sequence": 14,
+          "timestamp": "2026-11-13T00:04:12.771529+00:00",
+          "trace_id": "502bfa10-19af-4b10-92bc-054bc8ef7347",
+          "event": "staff_access",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"CUST-001\", \"outcome\": \"blocked\"}"
+        }
+      ],
+      "ledger": [],
+      "accounts": [
+        {
+          "customer": "CUST-001",
+          "balance": 0
+        },
+        {
+          "customer": "CUST-002",
+          "balance": 0
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.Controls.test_customer_cannot_read_reports",
+      "observed": [
+        {
+          "path": "/api/reports",
+          "http": 403
+        },
+        {
+          "path": "/api/audit",
+          "http": 403
+        }
+      ],
+      "audit": [
+        {
+          "sequence": 15,
+          "timestamp": "2026-11-13T00:04:12.919611+00:00",
+          "trace_id": "d46e087e-a3bb-4943-8ef0-10a8e882ad94",
+          "event": "login",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"CUST-001\", \"outcome\": \"allowed\"}"
+        },
+        {
+          "sequence": 16,
+          "timestamp": "2026-11-13T00:04:12.929476+00:00",
+          "trace_id": "29870fc5-e7ac-4105-a0b7-2e12ddda9fe6",
+          "event": "staff_access",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"CUST-001\", \"outcome\": \"blocked\"}"
+        },
+        {
+          "sequence": 17,
+          "timestamp": "2026-11-13T00:04:12.937953+00:00",
+          "trace_id": "892e5e2a-6fbd-4cf5-9fd5-e67f813e35d6",
+          "event": "staff_access",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"CUST-001\", \"outcome\": \"blocked\"}"
+        }
+      ],
+      "ledger": [],
+      "accounts": [
+        {
+          "customer": "CUST-001",
+          "balance": 0
+        },
+        {
+          "customer": "CUST-002",
+          "balance": 0
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.Controls.test_dynamic_ui_is_served",
+      "observed": [
+        {
+          "check": "Dynamic UI assets served; not a browser interaction test"
+        }
+      ],
+      "audit": [],
+      "ledger": [],
+      "accounts": [
+        {
+          "customer": "CUST-001",
+          "balance": 0
+        },
+        {
+          "customer": "CUST-002",
+          "balance": 0
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.Controls.test_foreign_origin_blocked",
+      "observed": [
+        {
+          "http": 403,
+          "action": "foreign_origin"
+        }
+      ],
+      "audit": [
+        {
+          "sequence": 18,
+          "timestamp": "2026-11-13T00:04:13.161310+00:00",
+          "trace_id": "cc6994de-554d-43c5-a6d1-330b21c67d41",
+          "event": "login",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"CUST-001\", \"outcome\": \"allowed\"}"
+        }
+      ],
+      "ledger": [],
+      "accounts": [
+        {
+          "customer": "CUST-001",
+          "balance": 0
+        },
+        {
+          "customer": "CUST-002",
+          "balance": 0
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.Controls.test_forged_identity_field",
+      "observed": [
+        {
+          "action": "create_case",
+          "http": 422,
+          "response": {
+            "detail": [
+              {
+                "type": "extra_forbidden",
+                "loc": [
+                  "body",
+                  "customer"
+                ],
+                "msg": "Extra inputs are not permitted",
+                "input": "CUST-002"
+              },
+              {
+                "type": "extra_forbidden",
+                "loc": [
+                  "body",
+                  "evidence_verified"
+                ],
+                "msg": "Extra inputs are not permitted",
+                "input": 1
+              }
+            ]
+          }
+        }
+      ],
+      "audit": [
+        {
+          "sequence": 19,
+          "timestamp": "2026-11-13T00:04:13.320243+00:00",
+          "trace_id": "d3b1ea72-976d-4a27-8934-80e3f688152d",
+          "event": "login",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"CUST-001\", \"outcome\": \"allowed\"}"
+        }
+      ],
+      "ledger": [],
+      "accounts": [
+        {
+          "customer": "CUST-001",
+          "balance": 0
+        },
+        {
+          "customer": "CUST-002",
+          "balance": 0
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.Controls.test_mcp_amount_tampering",
+      "observed": [
+        {
+          "action": "create_case",
+          "http": 200,
+          "response": {
+            "case_id": "NX-A62838C38D8F",
+            "status": "submitted"
+          }
+        },
+        {
+          "transport": "real_stdio_mcp",
+          "tool": "execute_refund",
+          "arguments": {
+            "proposed_amount_cents": 99999,
+            "recommendation": "execute"
+          },
+          "is_error": false,
+          "result": [
+            "{\n  \"status\": \"blocked\",\n  \"reason\": \"proposal_amount_mismatch\",\n  \"case_id\": \"NX-A62838C38D8F\",\n  \"run_id\": \"f7b64aba-bc3c-4ba3-8c12-a97d9545088d\"\n}"
+          ]
+        }
+      ],
+      "audit": [
+        {
+          "sequence": 20,
+          "timestamp": "2026-11-13T00:04:13.481646+00:00",
+          "trace_id": "47b1d3e3-4c33-4eb8-b680-20d9eb35f40f",
+          "event": "login",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"CUST-001\", \"outcome\": \"allowed\"}"
+        },
+        {
+          "sequence": 21,
+          "timestamp": "2026-11-13T00:04:13.492577+00:00",
+          "trace_id": "0ec271ac-2b48-4342-b79c-3d5ba6ad5121",
+          "event": "intake",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"CUST-001\", \"case_id\": \"NX-A62838C38D8F\", \"amount_cents\": 6400, \"outcome\": \"submitted\"}"
+        },
+        {
+          "sequence": 22,
+          "timestamp": "2026-11-13T00:04:13.492733+00:00",
+          "trace_id": "195f8917-b01d-4551-98e4-c25f447d3ae8",
+          "event": "mock_email",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-A62838C38D8F\", \"kind\": \"acknowledgement\", \"transport\": \"database_only\", \"recipient\": \"CUST-001\"}"
+        },
+        {
+          "sequence": 23,
+          "timestamp": "2026-11-13T00:04:13.649978+00:00",
+          "trace_id": "8542058c-e32f-4f96-81a2-5e24fadbe93a",
+          "event": "login",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"STAFF-001\", \"outcome\": \"allowed\"}"
+        },
+        {
+          "sequence": 24,
+          "timestamp": "2026-11-13T00:04:13.661175+00:00",
+          "trace_id": "2946aecd-7e81-41c2-a76e-141ab5497b4e",
+          "event": "evidence_verified",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"STAFF-001\", \"case_id\": \"NX-A62838C38D8F\", \"reason\": \"Staff verified synthetic damage and delivery evidence.\", \"note_recorded\": true}"
+        },
+        {
+          "sequence": 25,
+          "timestamp": "2026-11-13T00:04:16.449150+00:00",
+          "trace_id": "f7b64aba-bc3c-4ba3-8c12-a97d9545088d",
+          "event": "agent_refund_proposal",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-A62838C38D8F\", \"proposed_amount_cents\": 99999, \"recommendation\": \"execute\"}"
+        },
+        {
+          "sequence": 26,
+          "timestamp": "2026-11-13T00:04:16.449360+00:00",
+          "trace_id": "f7b64aba-bc3c-4ba3-8c12-a97d9545088d",
+          "event": "execution_gateway",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-A62838C38D8F\", \"status\": \"blocked\", \"reason\": \"proposal_amount_mismatch\"}"
+        }
+      ],
+      "ledger": [],
+      "accounts": [
+        {
+          "customer": "CUST-001",
+          "balance": 0
+        },
+        {
+          "customer": "CUST-002",
+          "balance": 0
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.Controls.test_mcp_cannot_change_permissions",
+      "observed": [
+        {
+          "action": "create_case",
+          "http": 200,
+          "response": {
+            "case_id": "NX-17F52FBB25F1",
+            "status": "submitted"
+          }
+        },
+        {
+          "transport": "real_stdio_mcp",
+          "tool": "restore_authority",
+          "arguments": {
+            "active": true
+          },
+          "is_error": true,
+          "result": [
+            "Tool name or arguments are outside this capability"
+          ]
+        }
+      ],
+      "audit": [
+        {
+          "sequence": 27,
+          "timestamp": "2026-11-13T00:04:17.153414+00:00",
+          "trace_id": "097909ae-c1a7-4ea0-8718-f354196a3927",
+          "event": "login",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"CUST-001\", \"outcome\": \"allowed\"}"
+        },
+        {
+          "sequence": 28,
+          "timestamp": "2026-11-13T00:04:17.163213+00:00",
+          "trace_id": "6cbcc3ea-ca6c-4a80-9651-6a01701ff826",
+          "event": "intake",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"CUST-001\", \"case_id\": \"NX-17F52FBB25F1\", \"amount_cents\": 6400, \"outcome\": \"submitted\"}"
+        },
+        {
+          "sequence": 29,
+          "timestamp": "2026-11-13T00:04:17.163355+00:00",
+          "trace_id": "da0b24f5-f105-4e46-8dc0-de77c5b74859",
+          "event": "mock_email",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-17F52FBB25F1\", \"kind\": \"acknowledgement\", \"transport\": \"database_only\", \"recipient\": \"CUST-001\"}"
+        },
+        {
+          "sequence": 30,
+          "timestamp": "2026-11-13T00:04:18.940518+00:00",
+          "trace_id": "ea0f3380-22d6-4598-a4be-526c30884dfa",
+          "event": "mcp_arguments_blocked",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-17F52FBB25F1\", \"tool\": \"restore_authority\"}"
+        }
+      ],
+      "ledger": [],
+      "accounts": [
+        {
+          "customer": "CUST-001",
+          "balance": 0
+        },
+        {
+          "customer": "CUST-002",
+          "balance": 0
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.Controls.test_mcp_cannot_select_another_case",
+      "observed": [
+        {
+          "action": "create_case",
+          "http": 200,
+          "response": {
+            "case_id": "NX-545FF5DE1D77",
+            "status": "submitted"
+          }
+        },
+        {
+          "transport": "real_stdio_mcp",
+          "tool": "read_case",
+          "arguments": {
+            "case_id": "OTHER-CUSTOMER-CASE"
+          },
+          "is_error": true,
+          "result": [
+            "Tool name or arguments are outside this capability"
+          ]
+        }
+      ],
+      "audit": [
+        {
+          "sequence": 31,
+          "timestamp": "2026-11-13T00:04:19.503191+00:00",
+          "trace_id": "f5214eef-7dbc-4a98-be12-e5bdf248ed8c",
+          "event": "login",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"CUST-001\", \"outcome\": \"allowed\"}"
+        },
+        {
+          "sequence": 32,
+          "timestamp": "2026-11-13T00:04:19.511408+00:00",
+          "trace_id": "d1c143fa-8f7a-4355-a02d-c5236133952b",
+          "event": "intake",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"CUST-001\", \"case_id\": \"NX-545FF5DE1D77\", \"amount_cents\": 6400, \"outcome\": \"submitted\"}"
+        },
+        {
+          "sequence": 33,
+          "timestamp": "2026-11-13T00:04:19.511501+00:00",
+          "trace_id": "9b03fd4f-ffc8-4bb6-a85c-54eff20a639f",
+          "event": "mock_email",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-545FF5DE1D77\", \"kind\": \"acknowledgement\", \"transport\": \"database_only\", \"recipient\": \"CUST-001\"}"
+        },
+        {
+          "sequence": 34,
+          "timestamp": "2026-11-13T00:04:21.178031+00:00",
+          "trace_id": "44a00bf5-2d3b-431b-a916-b139589f02dd",
+          "event": "mcp_arguments_blocked",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-545FF5DE1D77\", \"tool\": \"read_case\"}"
+        }
+      ],
+      "ledger": [],
+      "accounts": [
+        {
+          "customer": "CUST-001",
+          "balance": 0
+        },
+        {
+          "customer": "CUST-002",
+          "balance": 0
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.Controls.test_mcp_executes_mock_credit_once",
+      "observed": [
+        {
+          "action": "create_case",
+          "http": 200,
+          "response": {
+            "case_id": "NX-69D95835AB5D",
+            "status": "submitted"
+          }
+        },
+        {
+          "transport": "real_stdio_mcp",
+          "tool": "execute_refund",
+          "arguments": {
+            "proposed_amount_cents": 6400,
+            "recommendation": "execute"
+          },
+          "is_error": false,
+          "result": [
+            "{\n  \"case_id\": \"NX-69D95835AB5D\",\n  \"run_id\": \"97b8ce8f-1ebf-4726-a0f7-c8c167e59b8f\",\n  \"status\": \"executed\",\n  \"reason\": \"within_authority\",\n  \"trace_id\": \"d2f97901-923f-45f6-88e1-e1afa7623508\",\n  \"refund_id\": \"3da3fee9-8cf8-4891-82ea-1ef092bb238c\",\n  \"amount_cents\": 6400,\n  \"order_remaining_cents\": 1200\n}"
+          ]
+        },
+        {
+          "transport": "real_stdio_mcp",
+          "tool": "execute_refund",
+          "arguments": {
+            "proposed_amount_cents": 6400,
+            "recommendation": "execute"
+          },
+          "is_error": false,
+          "result": [
+            "{\n  \"case_id\": \"NX-69D95835AB5D\",\n  \"run_id\": \"64fdd7c5-6715-42e7-9f7e-8cfecb27dfd7\",\n  \"status\": \"replayed\",\n  \"reason\": \"already_executed\",\n  \"trace_id\": \"7dffa837-3f78-412d-8851-b98b7e2866c9\",\n  \"refund_id\": \"3da3fee9-8cf8-4891-82ea-1ef092bb238c\"\n}"
+          ]
+        }
+      ],
+      "audit": [
+        {
+          "sequence": 35,
+          "timestamp": "2026-11-13T00:04:21.698597+00:00",
+          "trace_id": "08b85e52-8435-4776-98d8-b988f3d237fa",
+          "event": "login",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"CUST-001\", \"outcome\": \"allowed\"}"
+        },
+        {
+          "sequence": 36,
+          "timestamp": "2026-11-13T00:04:21.706289+00:00",
+          "trace_id": "e690bbba-8ffd-42a2-8c51-2a6b599152e2",
+          "event": "intake",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"CUST-001\", \"case_id\": \"NX-69D95835AB5D\", \"amount_cents\": 6400, \"outcome\": \"submitted\"}"
+        },
+        {
+          "sequence": 37,
+          "timestamp": "2026-11-13T00:04:21.706402+00:00",
+          "trace_id": "31952951-ef86-4996-9a0a-831c861d4072",
+          "event": "mock_email",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-69D95835AB5D\", \"kind\": \"acknowledgement\", \"transport\": \"database_only\", \"recipient\": \"CUST-001\"}"
+        },
+        {
+          "sequence": 38,
+          "timestamp": "2026-11-13T00:04:21.799351+00:00",
+          "trace_id": "cd438927-23c3-4e62-89f5-0df23d18dc36",
+          "event": "login",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"STAFF-001\", \"outcome\": \"allowed\"}"
+        },
+        {
+          "sequence": 39,
+          "timestamp": "2026-11-13T00:04:21.808265+00:00",
+          "trace_id": "e31cf37a-02b4-4613-83c0-dca5214952fa",
+          "event": "evidence_verified",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"STAFF-001\", \"case_id\": \"NX-69D95835AB5D\", \"reason\": \"Staff verified synthetic damage and delivery evidence.\", \"note_recorded\": true}"
+        },
+        {
+          "sequence": 40,
+          "timestamp": "2026-11-13T00:04:23.458180+00:00",
+          "trace_id": "97b8ce8f-1ebf-4726-a0f7-c8c167e59b8f",
+          "event": "agent_refund_proposal",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-69D95835AB5D\", \"proposed_amount_cents\": 6400, \"recommendation\": \"execute\"}"
+        },
+        {
+          "sequence": 41,
+          "timestamp": "2026-11-13T00:04:23.458546+00:00",
+          "trace_id": "d2f97901-923f-45f6-88e1-e1afa7623508",
+          "event": "refund_attempt",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-69D95835AB5D\", \"actor\": \"CUST-001\", \"order_id\": \"NX-2048\", \"amount_cents\": 6400}"
+        },
+        {
+          "sequence": 42,
+          "timestamp": "2026-11-13T00:04:23.458920+00:00",
+          "trace_id": "d2f97901-923f-45f6-88e1-e1afa7623508",
+          "event": "authorization",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-69D95835AB5D\", \"status\": \"allowed\", \"reason\": \"within_authority\"}"
+        },
+        {
+          "sequence": 43,
+          "timestamp": "2026-11-13T00:04:23.461593+00:00",
+          "trace_id": "d2f97901-923f-45f6-88e1-e1afa7623508",
+          "event": "mock_refund_executed",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-69D95835AB5D\", \"refund_id\": \"3da3fee9-8cf8-4891-82ea-1ef092bb238c\", \"amount_cents\": 6400, \"destination\": \"mock-account-0042\", \"order_remaining_cents\": 1200, \"weekly_used_cents\": 6400}"
+        },
+        {
+          "sequence": 44,
+          "timestamp": "2026-11-13T00:04:23.462077+00:00",
+          "trace_id": "97b8ce8f-1ebf-4726-a0f7-c8c167e59b8f",
+          "event": "execution_gateway",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-69D95835AB5D\", \"status\": \"executed\", \"reason\": \"within_authority\", \"ledger_trace_id\": \"d2f97901-923f-45f6-88e1-e1afa7623508\"}"
+        },
+        {
+          "sequence": 45,
+          "timestamp": "2026-11-13T00:04:25.599991+00:00",
+          "trace_id": "64fdd7c5-6715-42e7-9f7e-8cfecb27dfd7",
+          "event": "agent_refund_proposal",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-69D95835AB5D\", \"proposed_amount_cents\": 6400, \"recommendation\": \"execute\"}"
+        },
+        {
+          "sequence": 46,
+          "timestamp": "2026-11-13T00:04:25.600303+00:00",
+          "trace_id": "7dffa837-3f78-412d-8851-b98b7e2866c9",
+          "event": "refund_attempt",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-69D95835AB5D\", \"actor\": \"CUST-001\", \"order_id\": \"NX-2048\", \"amount_cents\": 6400}"
+        },
+        {
+          "sequence": 47,
+          "timestamp": "2026-11-13T00:04:25.600506+00:00",
+          "trace_id": "7dffa837-3f78-412d-8851-b98b7e2866c9",
+          "event": "authorization",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-69D95835AB5D\", \"status\": \"replayed\", \"reason\": \"already_executed\"}"
+        },
+        {
+          "sequence": 48,
+          "timestamp": "2026-11-13T00:04:25.600821+00:00",
+          "trace_id": "64fdd7c5-6715-42e7-9f7e-8cfecb27dfd7",
+          "event": "execution_gateway",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-69D95835AB5D\", \"status\": \"replayed\", \"reason\": \"already_executed\", \"ledger_trace_id\": \"7dffa837-3f78-412d-8851-b98b7e2866c9\"}"
+        }
+      ],
+      "ledger": [
+        {
+          "id": "3da3fee9-8cf8-4891-82ea-1ef092bb238c",
+          "customer": "CUST-001",
+          "order_id": "NX-2048",
+          "amount": 6400,
+          "week": "2026-11-09",
+          "request_key": "case:NX-69D95835AB5D"
+        }
+      ],
+      "accounts": [
+        {
+          "customer": "CUST-001",
+          "balance": 6400
+        },
+        {
+          "customer": "CUST-002",
+          "balance": 0
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.Controls.test_mcp_honors_revocation",
+      "observed": [
+        {
+          "action": "create_case",
+          "http": 200,
+          "response": {
+            "case_id": "NX-48E3AF1B75F5",
+            "status": "submitted"
+          }
+        },
+        {
+          "transport": "real_stdio_mcp",
+          "tool": "execute_refund",
+          "arguments": {
+            "proposed_amount_cents": 6400,
+            "recommendation": "execute"
+          },
+          "is_error": false,
+          "result": [
+            "{\n  \"case_id\": \"NX-48E3AF1B75F5\",\n  \"run_id\": \"88721537-e831-46ac-ad3c-f6941a42b186\",\n  \"status\": \"blocked\",\n  \"reason\": \"authority_revoked\",\n  \"trace_id\": \"092d9b6c-c07a-4af3-8eac-fd518a19c6d2\"\n}"
+          ]
+        }
+      ],
+      "audit": [
+        {
+          "sequence": 49,
+          "timestamp": "2026-11-13T00:04:26.143042+00:00",
+          "trace_id": "febef2ee-0901-42e0-9afa-8133ba0e9fc9",
+          "event": "login",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"CUST-001\", \"outcome\": \"allowed\"}"
+        },
+        {
+          "sequence": 50,
+          "timestamp": "2026-11-13T00:04:26.150965+00:00",
+          "trace_id": "952aa461-2fee-40d0-bc19-96f4bad7c9ee",
+          "event": "intake",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"CUST-001\", \"case_id\": \"NX-48E3AF1B75F5\", \"amount_cents\": 6400, \"outcome\": \"submitted\"}"
+        },
+        {
+          "sequence": 51,
+          "timestamp": "2026-11-13T00:04:26.151057+00:00",
+          "trace_id": "e0227979-8fbf-40f2-a6fe-9d0f8b554f00",
+          "event": "mock_email",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-48E3AF1B75F5\", \"kind\": \"acknowledgement\", \"transport\": \"database_only\", \"recipient\": \"CUST-001\"}"
+        },
+        {
+          "sequence": 52,
+          "timestamp": "2026-11-13T00:04:26.238428+00:00",
+          "trace_id": "d5e0bad7-f370-4da0-840b-ddb3ba1fb721",
+          "event": "login",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"STAFF-001\", \"outcome\": \"allowed\"}"
+        },
+        {
+          "sequence": 53,
+          "timestamp": "2026-11-13T00:04:26.245818+00:00",
+          "trace_id": "5d8d809b-dad3-4b0a-94e9-ef664690325b",
+          "event": "evidence_verified",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"STAFF-001\", \"case_id\": \"NX-48E3AF1B75F5\", \"reason\": \"Staff verified synthetic damage and delivery evidence.\", \"note_recorded\": true}"
+        },
+        {
+          "sequence": 54,
+          "timestamp": "2026-11-13T00:04:26.252776+00:00",
+          "trace_id": "efcf6938-2dc6-4596-bfba-2faa118b43fc",
+          "event": "authority_change",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"STAFF-001\", \"active\": false, \"reason\": \"Red Team revocation test\", \"note_recorded\": true}"
+        },
+        {
+          "sequence": 55,
+          "timestamp": "2026-11-13T00:04:27.901721+00:00",
+          "trace_id": "88721537-e831-46ac-ad3c-f6941a42b186",
+          "event": "agent_refund_proposal",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-48E3AF1B75F5\", \"proposed_amount_cents\": 6400, \"recommendation\": \"execute\"}"
+        },
+        {
+          "sequence": 56,
+          "timestamp": "2026-11-13T00:04:27.902044+00:00",
+          "trace_id": "092d9b6c-c07a-4af3-8eac-fd518a19c6d2",
+          "event": "refund_attempt",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-48E3AF1B75F5\", \"actor\": \"CUST-001\", \"order_id\": \"NX-2048\", \"amount_cents\": 6400}"
+        },
+        {
+          "sequence": 57,
+          "timestamp": "2026-11-13T00:04:27.902260+00:00",
+          "trace_id": "092d9b6c-c07a-4af3-8eac-fd518a19c6d2",
+          "event": "authorization",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-48E3AF1B75F5\", \"status\": \"blocked\", \"reason\": \"authority_revoked\"}"
+        },
+        {
+          "sequence": 58,
+          "timestamp": "2026-11-13T00:04:27.902622+00:00",
+          "trace_id": "88721537-e831-46ac-ad3c-f6941a42b186",
+          "event": "execution_gateway",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-48E3AF1B75F5\", \"status\": \"blocked\", \"reason\": \"authority_revoked\", \"ledger_trace_id\": \"092d9b6c-c07a-4af3-8eac-fd518a19c6d2\"}"
+        }
+      ],
+      "ledger": [],
+      "accounts": [
+        {
+          "customer": "CUST-001",
+          "balance": 0
+        },
+        {
+          "customer": "CUST-002",
+          "balance": 0
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.Controls.test_mcp_honors_supervisor_denial",
+      "observed": [
+        {
+          "action": "create_case",
+          "http": 200,
+          "response": {
+            "case_id": "NX-97A8DEDC97C6",
+            "status": "submitted"
+          }
+        },
+        {
+          "transport": "real_stdio_mcp",
+          "tool": "execute_refund",
+          "arguments": {
+            "proposed_amount_cents": 6400,
+            "recommendation": "execute"
+          },
+          "is_error": false,
+          "result": [
+            "{\n  \"status\": \"blocked\",\n  \"reason\": \"supervisor_decision\",\n  \"case_id\": \"NX-97A8DEDC97C6\",\n  \"run_id\": \"296d2876-56cf-41cc-9b98-a70a91933cab\"\n}"
+          ]
+        }
+      ],
+      "audit": [
+        {
+          "sequence": 59,
+          "timestamp": "2026-11-13T00:04:28.438116+00:00",
+          "trace_id": "a7aab150-54b5-4b95-91c5-34b547d9197a",
+          "event": "login",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"CUST-001\", \"outcome\": \"allowed\"}"
+        },
+        {
+          "sequence": 60,
+          "timestamp": "2026-11-13T00:04:28.445698+00:00",
+          "trace_id": "452f080a-b598-40b4-b438-73c5695c0081",
+          "event": "intake",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"CUST-001\", \"case_id\": \"NX-97A8DEDC97C6\", \"amount_cents\": 6400, \"outcome\": \"submitted\"}"
+        },
+        {
+          "sequence": 61,
+          "timestamp": "2026-11-13T00:04:28.445791+00:00",
+          "trace_id": "848adf92-9e6f-4d49-a855-8fa99e4e095d",
+          "event": "mock_email",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-97A8DEDC97C6\", \"kind\": \"acknowledgement\", \"transport\": \"database_only\", \"recipient\": \"CUST-001\"}"
+        },
+        {
+          "sequence": 62,
+          "timestamp": "2026-11-13T00:04:28.532709+00:00",
+          "trace_id": "bf6f9716-1af1-4a29-ba00-1542f12e53f2",
+          "event": "login",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"STAFF-001\", \"outcome\": \"allowed\"}"
+        },
+        {
+          "sequence": 63,
+          "timestamp": "2026-11-13T00:04:28.540023+00:00",
+          "trace_id": "f73fef6b-c295-4115-98c0-fce639bd130a",
+          "event": "evidence_verified",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"STAFF-001\", \"case_id\": \"NX-97A8DEDC97C6\", \"reason\": \"Staff verified synthetic damage and delivery evidence.\", \"note_recorded\": true}"
+        },
+        {
+          "sequence": 64,
+          "timestamp": "2026-11-13T00:04:28.548690+00:00",
+          "trace_id": "1c681771-28c8-4281-8c20-51e8dc3fb0aa",
+          "event": "supervisor_decision",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"STAFF-001\", \"case_id\": \"NX-97A8DEDC97C6\", \"decision\": \"denied\", \"reason\": \"Red Team test: supervisor explicitly denied\", \"note_recorded\": true}"
+        },
+        {
+          "sequence": 65,
+          "timestamp": "2026-11-13T00:04:28.548799+00:00",
+          "trace_id": "bfd0f0fe-74a3-43ea-94d7-1749275c136e",
+          "event": "mock_email",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-97A8DEDC97C6\", \"kind\": \"decision\", \"transport\": \"database_only\", \"recipient\": \"CUST-001\"}"
+        },
+        {
+          "sequence": 66,
+          "timestamp": "2026-11-13T00:04:30.173189+00:00",
+          "trace_id": "296d2876-56cf-41cc-9b98-a70a91933cab",
+          "event": "agent_refund_proposal",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-97A8DEDC97C6\", \"proposed_amount_cents\": 6400, \"recommendation\": \"execute\"}"
+        },
+        {
+          "sequence": 67,
+          "timestamp": "2026-11-13T00:04:30.173352+00:00",
+          "trace_id": "296d2876-56cf-41cc-9b98-a70a91933cab",
+          "event": "execution_gateway",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-97A8DEDC97C6\", \"status\": \"blocked\", \"reason\": \"supervisor_decision\"}"
+        }
+      ],
+      "ledger": [],
+      "accounts": [
+        {
+          "customer": "CUST-001",
+          "balance": 0
+        },
+        {
+          "customer": "CUST-002",
+          "balance": 0
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.Controls.test_mcp_requires_verified_evidence",
+      "observed": [
+        {
+          "action": "create_case",
+          "http": 200,
+          "response": {
+            "case_id": "NX-A4C4EC779221",
+            "status": "submitted"
+          }
+        },
+        {
+          "transport": "real_stdio_mcp",
+          "tool": "execute_refund",
+          "arguments": {
+            "proposed_amount_cents": 6400,
+            "recommendation": "execute"
+          },
+          "is_error": false,
+          "result": [
+            "{\n  \"status\": \"review_required\",\n  \"reason\": \"staff_evidence_verification_required\",\n  \"case_id\": \"NX-A4C4EC779221\",\n  \"run_id\": \"4429d4b7-33dd-4d3b-b361-55a9e6bcf314\"\n}"
+          ]
+        }
+      ],
+      "audit": [
+        {
+          "sequence": 68,
+          "timestamp": "2026-11-13T00:04:30.721041+00:00",
+          "trace_id": "bd6165fd-5137-4ba7-8339-312c607361d2",
+          "event": "login",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"CUST-001\", \"outcome\": \"allowed\"}"
+        },
+        {
+          "sequence": 69,
+          "timestamp": "2026-11-13T00:04:30.729205+00:00",
+          "trace_id": "3759d095-1ddf-4809-bd00-d01f7dc7cf2d",
+          "event": "intake",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"CUST-001\", \"case_id\": \"NX-A4C4EC779221\", \"amount_cents\": 6400, \"outcome\": \"submitted\"}"
+        },
+        {
+          "sequence": 70,
+          "timestamp": "2026-11-13T00:04:30.729309+00:00",
+          "trace_id": "e50beb42-5df0-4569-ae71-db455f9211e0",
+          "event": "mock_email",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-A4C4EC779221\", \"kind\": \"acknowledgement\", \"transport\": \"database_only\", \"recipient\": \"CUST-001\"}"
+        },
+        {
+          "sequence": 71,
+          "timestamp": "2026-11-13T00:04:32.383745+00:00",
+          "trace_id": "4429d4b7-33dd-4d3b-b361-55a9e6bcf314",
+          "event": "agent_refund_proposal",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-A4C4EC779221\", \"proposed_amount_cents\": 6400, \"recommendation\": \"execute\"}"
+        },
+        {
+          "sequence": 72,
+          "timestamp": "2026-11-13T00:04:32.383876+00:00",
+          "trace_id": "4429d4b7-33dd-4d3b-b361-55a9e6bcf314",
+          "event": "execution_gateway",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-A4C4EC779221\", \"status\": \"review_required\", \"reason\": \"staff_evidence_verification_required\"}"
+        }
+      ],
+      "ledger": [],
+      "accounts": [
+        {
+          "customer": "CUST-001",
+          "balance": 0
+        },
+        {
+          "customer": "CUST-002",
+          "balance": 0
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.Controls.test_strict_integer_money",
+      "observed": [
+        {
+          "action": "create_case",
+          "http": 422,
+          "response": {
+            "detail": [
+              {
+                "type": "int_type",
+                "loc": [
+                  "body",
+                  "amount_cents"
+                ],
+                "msg": "Input should be a valid integer",
+                "input": true
+              }
+            ]
+          }
+        },
+        {
+          "action": "create_case",
+          "http": 422,
+          "response": {
+            "detail": [
+              {
+                "type": "int_type",
+                "loc": [
+                  "body",
+                  "amount_cents"
+                ],
+                "msg": "Input should be a valid integer",
+                "input": 6400.5
+              }
+            ]
+          }
+        },
+        {
+          "action": "create_case",
+          "http": 422,
+          "response": {
+            "detail": [
+              {
+                "type": "int_type",
+                "loc": [
+                  "body",
+                  "amount_cents"
+                ],
+                "msg": "Input should be a valid integer",
+                "input": "6400"
+              }
+            ]
+          }
+        },
+        {
+          "action": "create_case",
+          "http": 422,
+          "response": {
+            "detail": [
+              {
+                "type": "greater_than",
+                "loc": [
+                  "body",
+                  "amount_cents"
+                ],
+                "msg": "Input should be greater than 0",
+                "input": 0,
+                "ctx": {
+                  "gt": 0
+                }
+              }
+            ]
+          }
+        },
+        {
+          "action": "create_case",
+          "http": 422,
+          "response": {
+            "detail": [
+              {
+                "type": "greater_than",
+                "loc": [
+                  "body",
+                  "amount_cents"
+                ],
+                "msg": "Input should be greater than 0",
+                "input": -1,
+                "ctx": {
+                  "gt": 0
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "audit": [
+        {
+          "sequence": 73,
+          "timestamp": "2026-11-13T00:04:32.917410+00:00",
+          "trace_id": "1d7214f7-dc3b-4d18-806e-467a5b15590f",
+          "event": "login",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"CUST-001\", \"outcome\": \"allowed\"}"
+        }
+      ],
+      "ledger": [],
+      "accounts": [
+        {
+          "customer": "CUST-001",
+          "balance": 0
+        },
+        {
+          "customer": "CUST-002",
+          "balance": 0
+        }
+      ]
+    },
+    {
+      "test_id": "__main__.Controls.test_submission_does_not_pay",
+      "observed": [
+        {
+          "action": "create_case",
+          "http": 200,
+          "response": {
+            "case_id": "NX-DBE0760D042A",
+            "status": "submitted"
+          }
+        }
+      ],
+      "audit": [
+        {
+          "sequence": 74,
+          "timestamp": "2026-11-13T00:04:33.042603+00:00",
+          "trace_id": "dc3f8840-9fd4-4794-af62-9c858338b363",
+          "event": "login",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"CUST-001\", \"outcome\": \"allowed\"}"
+        },
+        {
+          "sequence": 75,
+          "timestamp": "2026-11-13T00:04:33.049799+00:00",
+          "trace_id": "6a3011e1-2fbf-4e44-afaa-fa596cf209e5",
+          "event": "intake",
+          "details": "{\"policy_version\": \"refund-v1\", \"actor\": \"CUST-001\", \"case_id\": \"NX-DBE0760D042A\", \"amount_cents\": 6400, \"outcome\": \"submitted\"}"
+        },
+        {
+          "sequence": 76,
+          "timestamp": "2026-11-13T00:04:33.049893+00:00",
+          "trace_id": "86534039-3411-4fa2-851f-01a30d646532",
+          "event": "mock_email",
+          "details": "{\"policy_version\": \"refund-v1\", \"case_id\": \"NX-DBE0760D042A\", \"kind\": \"acknowledgement\", \"transport\": \"database_only\", \"recipient\": \"CUST-001\"}"
+        }
+      ],
+      "ledger": [],
+      "accounts": [
+        {
+          "customer": "CUST-001",
+          "balance": 0
+        },
+        {
+          "customer": "CUST-002",
+          "balance": 0
+        }
+      ]
+    }
+  ],
+  "failures": []
+}

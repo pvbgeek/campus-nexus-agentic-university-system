@@ -1,28 +1,16 @@
-# Team Responsibilities
+# Team responsibilities and interim contribution status
 
-## Existing Subteam Assignments
+Blue Team: Parth Bhalerao, Kavya Sharma and Calianna Collins.
+Red Team: Dana Steinke and Noelle Evanich.
 
-- Red Team: Dana Steinke and Noelle Evanich.
-- Blue Team: Parth Bhalerao, Kavya Sharma, and Calianna Collins.
+The responsibilities below reflect the current allocation. Shared implementation and test outputs are verified; individual completion is stated only where the provided record supports it.
 
-## Proposed Individual Work Allocation
-
-The allocation below is a proposed work plan for team confirmation before submission.
-It describes intended responsibilities, not completed individual contributions.
-
-| Member | Subteam | Planned responsibilities |
+| Member | Assigned work | Confirmed interim status |
 |---|---|---|
-| Parth Bhalerao | Blue | Orchestration and integration; execution-boundary authorization; refund-limit and revocation enforcement; architecture coordination |
-| Kavya Sharma | Blue | Records tools; synthetic profiles and orders; policy ingestion and scoped vector retrieval; mock account data |
-| Calianna Collins | Blue | Intake, Email, and Reporting workflow coordination; browser interface; acknowledgements, notifications, and reports |
-| Dana Steinke | Red | Prompt-injection and refund-authority tests; transaction and weekly-limit boundaries; supervisor-decision and revocation tests |
-| Noelle Evanich | Red | Cross-case access and disclosure tests; RAG/memory poisoning and inter-agent misuse tests; evidence quality and reproducibility |
+| Parth Bhalerao | Main backend, agents, orchestration, authority controls, integration, logs and evidence | Ran the integration/setup commands, 32 control checks, real retrieval/MCP checks and both live scenarios; supplied browser request/review logs and evidence bundle |
+| Kavya Sharma | UI plus backend records lookup and policy retrieval connections | UI handoff is attributed to Kavya's design contribution; the packet is integrated. Separate individual backend completion has not been confirmed |
+| Calianna Collins | UI plus backend intake, mock inbox and reporting connections | These features work in the shared build. Individual completed changes have not been separately confirmed |
+| Dana Steinke | Prompt injection, refund authority tests and remediation retests | Shared suite and live containment evidence exist. Individual test authorship/execution has not been confirmed |
+| Noelle Evanich | Record scope/disclosure, memory and inter-agent tests, evidence review | Scope and MCP controls have passed. Broader memory/inter-agent tests remain pending; individual completed changes have not been confirmed |
 
-## Shared Responsibilities
-
-- Both subteams contribute to system definition and the shared threat model.
-- Blue implements controls, investigates findings, and remediates weaknesses.
-- Red develops and executes authorized tests and challenges remediation.
-- Both subteams contribute to risk reporting, retesting, governance documentation,
-  assurance evidence, and presentation preparation.
-- Record actual contributions separately as work is completed.
+Before submission, the team should confirm any additional completed individual work. Assigned responsibilities and successful shared tests do not establish individual authorship. Do not replace these status statements with unverified claims.
