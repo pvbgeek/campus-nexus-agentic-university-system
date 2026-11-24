@@ -167,9 +167,18 @@ if os.environ.get("CAMPUS_MCP_CASE"):
             case, run_id = scoped_case(db)
             actual = db.execute("SELECT id,amount FROM refunds WHERE customer=? AND request_key=?", (case["customer"], "case:"+case["id"])).fetchone()
             audit(db, run_id, "case_report_recorded", case_id=case["id"], mock_refund_executed=bool(actual))
+            # Preserve the response field for existing clients. The model
+            # draft remains in the workflow checkpoint, outside this report.
+            verified_summary = (
+                "No refund has executed for this case."
+                if actual is None
+                else "Executed mock credit: {} cents; refund {}.".format(
+                    actual["amount"], actual["id"]
+                )
+            )
             return dict(case_id=case["id"], status=case["status"], reason=case["decision_reason"],
                         executed_cents=actual["amount"] if actual else 0,
-                        refund_id=actual["id"] if actual else None, agent_summary=summary)
+                        refund_id=actual["id"] if actual else None, agent_summary=verified_summary)
 
 
 if __name__ == "__main__":
