@@ -1,0 +1,11 @@
+**
+!Dockerfile
+!requirements-agents.lock.txt
+!app/
+!app/**
+!docs/
+!docs/policies/
+!docs/policies/current-policy.md
+app/**/__pycache__/
+app/**/*.pyc
+app/**/.env*
