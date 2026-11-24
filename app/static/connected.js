@@ -112,6 +112,34 @@ async function addCaseDetails(container, id) {
   container.append(node("p",data.case.details,"message support-detail"));
   for(const run of data.runs||[]){const section=node("details");section.append(node("summary","Agent run "+run.id+" · "+run.status),node("pre",JSON.stringify(run.state,null,2),"support-json"));container.append(section);}
   for(const message of data.messages){const m=node("div",undefined,"message");m.append(node("strong",message.kind+" · Mock inbox"),node("p",message.body,"support-detail"),node("small",message.created));container.append(m);}
+  if (user?.role === "customer") {
+    const form = node("form", undefined, "panel");
+    const input = field(form, "Add a follow-up", "textarea");
+    input.maxLength = 2000;
+    const submit = node("button", "Send follow-up", "btn");
+    submit.type = "submit";
+    const feedback = node("p");
+    feedback.setAttribute("role", "status");
+    form.append(submit, feedback);
+    form.addEventListener("submit", async event => {
+      event.preventDefault();
+      submit.disabled = true;
+      try {
+        await api("/cases/" + encodeURIComponent(id) + "/messages",
+                  "POST", {text: input.value});
+        container.replaceChildren();
+        await addCaseDetails(container, id);
+        container.querySelector("textarea")?.focus();
+        const status = container.querySelector("[role=status]");
+        if (status) status.textContent = "Follow-up saved.";
+      } catch (error) {
+        feedback.textContent = error.message;
+      } finally {
+        submit.disabled = false;
+      }
+    });
+    container.append(form);
+  }
 }
 async function renderCases(staff=false) {
   if(staff && user.role!=="staff")throw new Error("Staff access required.");

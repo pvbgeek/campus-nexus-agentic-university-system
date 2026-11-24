@@ -1,0 +1,13 @@
+{
+  "base_commit": "86f496c56778638c4a2a171d2db9c04d83366ca0",
+  "patch_state": "uncommitted follow-up changes",
+  "verified": [
+    "blank message rejected",
+    "follow-up saved",
+    "customer and staff case APIs returned the saved follow-up",
+    "staff reports unavailable to customer"
+  ],
+  "browser_check": "JavaScript syntax only",
+  "live_model_called": false,
+  "passed": true
+}

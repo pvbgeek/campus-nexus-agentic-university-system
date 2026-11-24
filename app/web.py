@@ -304,6 +304,33 @@ def case_detail(case_id: str, user=Depends(identity)):
             for r in db.execute("SELECT * FROM agent_runs WHERE case_id=? ORDER BY started", (case_id,))])
 
 
+class CaseMessage(Body):
+    text: str = Field(min_length=1, max_length=2000)
+
+
+@app.post("/api/cases/{case_id}/messages", status_code=201)
+def add_case_message(case_id: str, body: CaseMessage, user=Depends(customer)):
+    content = body.text.strip()
+    if not content:
+        raise HTTPException(422, "Enter a message")
+    with database(write=True) as db:
+        case = get_case(db, case_id, user)
+        count = db.execute(
+            "SELECT COUNT(*) FROM messages WHERE case_id=? AND kind=?",
+            (case_id, "customer_followup"),
+        ).fetchone()[0]
+        if count >= 30:
+            raise HTTPException(409, "This demo case has reached its follow-up limit")
+        message_id = str(uuid.uuid4())
+        db.execute(
+            "INSERT INTO messages(id,case_id,customer,kind,body,created) VALUES (?,?,?,?,?,?)",
+            (message_id, case_id, case["customer"], "customer_followup", content, now()),
+        )
+        audit(db, str(uuid.uuid4()), "customer_followup", actor=user["actor"],
+              case_id=case_id, message_id=message_id)
+    return {"message_id": message_id}
+
+
 @app.post("/api/cases/{case_id}/review")
 def customer_review(case_id: str, user=Depends(customer)):
     with database(write=True) as db:
