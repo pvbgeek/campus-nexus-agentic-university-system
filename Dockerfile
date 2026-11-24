@@ -8,6 +8,7 @@ COPY app ./app
 COPY scripts/build_policy_index.py scripts/publish_policy.py scripts/init_local.py ./scripts/
 COPY docs/policies/current-policy.md ./docs/policies/current-policy.md
 ENV CAMPUS_NEXUS_DATA=/srv/data PYTHONDONTWRITEBYTECODE=1
+ENV CAMPUS_NEXUS_EVIDENCE_DIR=/srv/data/evidence
 USER campus
 EXPOSE 8000
 CMD ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

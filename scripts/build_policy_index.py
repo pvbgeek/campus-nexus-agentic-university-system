@@ -14,8 +14,14 @@ query = "Can the agent refund more than one hundred dollars in a single transact
 results = search_policy(query)
 assert results and any("100.00" in r["text"] for r in results), "Relevant transaction policy was not retrieved"
 print("PASS: Semantic query retrieved the transaction authority policy.")
-output = ROOT / "redteam/results/retrieval-smoke.json"
+import os
+evidence_dir = os.environ.get("CAMPUS_NEXUS_EVIDENCE_DIR")
+output = (
+    Path(evidence_dir) / "policy-index-build.json"
+    if evidence_dir
+    else ROOT / "redteam/results/retrieval-smoke.json"
+)
 output.parent.mkdir(parents=True, exist_ok=True)
 output.write_text(json.dumps(dict(executed_at=datetime.now(timezone.utc).isoformat(), test="semantic-policy-retrieval", query=query,
                                  manifest=manifest, matches=results, passed=True), indent=2)+"\n", encoding="utf-8")
-print("Evidence:", output.relative_to(ROOT))
+print("Evidence:", output)
