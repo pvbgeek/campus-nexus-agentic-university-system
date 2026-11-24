@@ -6,6 +6,7 @@ import hashlib
 import hmac
 import json
 import os
+import re
 import secrets
 import sqlite3
 import time
@@ -60,6 +61,75 @@ class Login(Body):
     password: str = Field(min_length=1, max_length=200)
 
 
+class Signup(Body):
+    username: str = Field(min_length=3, max_length=32)
+    password: str = Field(min_length=12, max_length=200)
+
+
+with database() as db:
+    db.executescript("""
+        CREATE TABLE IF NOT EXISTS customer_identities (
+            username TEXT PRIMARY KEY,
+            actor TEXT NOT NULL UNIQUE,
+            salt TEXT NOT NULL,
+            digest TEXT NOT NULL
+        );
+    """)
+
+
+def demo_identities():
+    path = DATA / "identities.json"
+    return json.loads(path.read_text(encoding="utf-8")) if path.is_file() else {}
+
+
+def enforce_signup_limit(request: Request):
+    # Count attempts before password hashing. The global budget also
+    # protects the service when requests arrive from multiple peers.
+    peer = request.client.host if request.client else "unknown"
+    window = int(time.time()) // 600
+    with database(write=True) as db:
+        db.execute("""CREATE TABLE IF NOT EXISTS signup_limits (
+            bucket TEXT PRIMARY KEY, window INTEGER NOT NULL, attempts INTEGER NOT NULL
+        )""")
+        db.execute("DELETE FROM signup_limits WHERE window < ?", (window,))
+        for bucket, limit in (("global", 60), ("peer:" + peer, 6)):
+            row = db.execute("SELECT attempts FROM signup_limits WHERE bucket=?", (bucket,)).fetchone()
+            if row and row["attempts"] >= limit:
+                retry = str(max(1, (window + 1) * 600 - int(time.time())))
+                raise HTTPException(429, "Too many signup attempts. Try again later.",
+                                    headers={"Retry-After": retry})
+        for bucket in ("global", "peer:" + peer):
+            db.execute("""INSERT INTO signup_limits VALUES (?,?,1)
+                ON CONFLICT(bucket) DO UPDATE SET attempts=attempts+1""", (bucket, window))
+
+
+@app.post("/api/signup", status_code=201)
+def signup(body: Signup, request: Request):
+    enforce_signup_limit(request)
+    username = body.username.strip().lower()
+    if not re.fullmatch(r"[a-z0-9_]{3,32}", username):
+        raise HTTPException(422, "Use 3 to 32 letters, digits or underscores")
+    if username in {"avery", "jordan", "supervisor"} or username in demo_identities():
+        raise HTTPException(409, "Username unavailable")
+    actor = "CUST-" + uuid.uuid4().hex
+    order_id = "NX-" + uuid.uuid4().hex
+    salt = secrets.token_bytes(16)
+    digest = hashlib.pbkdf2_hmac("sha256", body.password.encode(), salt, 310000).hex()
+    delivered = (datetime.now(timezone.utc) - timedelta(days=3)).date().isoformat()
+    with database(write=True) as db:
+        if db.execute("SELECT 1 FROM customer_identities WHERE username=?", (username,)).fetchone():
+            raise HTTPException(409, "Username unavailable")
+        db.execute("INSERT INTO customer_identities VALUES (?,?,?,?)",
+                   (username, actor, salt.hex(), digest))
+        db.execute("INSERT INTO accounts(customer,destination,balance) VALUES (?,?,0)",
+                   (actor, "mock-" + actor))
+        db.execute("INSERT INTO orders(id,customer,total) VALUES (?,?,7600)", (order_id, actor))
+        db.execute("INSERT INTO order_evidence VALUES (?,?,?)",
+                   (order_id, delivered, "synthetic_signup_fixture"))
+        audit(db, str(uuid.uuid4()), "customer_signup", actor=actor, outcome="created")
+    return {"username": username}
+
+
 class CaseRequest(Body):
     order_id: str = Field(min_length=1, max_length=80)
     amount_cents: StrictInt = Field(gt=0, le=1000000)
@@ -80,11 +150,14 @@ class Authority(Body):
 
 @app.post("/api/login")
 def login(body: Login, request: Request, response: Response):
-    path = DATA / "identities.json"
-    if not path.is_file():
-        raise HTTPException(503, "Run scripts/init_local.py to create local demo identities.")
-    users = json.loads(path.read_text(encoding="utf-8"))
-    user = users.get(body.username)
+    username = body.username.strip().lower()
+    user = demo_identities().get(username)
+    if user is None:
+        with database() as db:
+            row = db.execute("SELECT actor,salt,digest FROM customer_identities WHERE username=?",
+                             (username,)).fetchone()
+        if row is not None:
+            user = dict(row, role="customer")
     peer = request.client.host if request.client else "local"
     with database(write=True) as db:
         failure = db.execute("SELECT * FROM login_failures WHERE peer=?", (peer,)).fetchone()

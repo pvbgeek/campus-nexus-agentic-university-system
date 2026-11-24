@@ -40,6 +40,35 @@ function showLogin() {
   const error=node("p","","support-error");error.setAttribute("role","alert");
   const submit=node("button","Sign in","btn");submit.type="submit";form.append(error,submit);
   form.addEventListener("submit",async e=>{e.preventDefault();submit.disabled=true;try{user=await api("/login","POST",{username:username.value,password:password.value});password.value="";location.href=user.role==="staff"?"staff.html":"orders.html";}catch(err){error.textContent=err.message;}finally{submit.disabled=false;}});
+  form.append(button("Create customer account", showSignup, "btn secondary"));
+  workspace.append(form);
+}
+function showSignup() {
+  clear("Create a customer account", "Use a demo username. Your account comes with one synthetic order.");
+  const form = node("form", undefined, "panel support-login");
+  const username = field(form, "Username");
+  const password = field(form, "Password", "password");
+  username.autocomplete = "username";
+  password.autocomplete = "new-password";
+  password.minLength = 12;
+  const error = node("p", "", "support-error");
+  error.setAttribute("role", "alert");
+  const submit = node("button", "Create account", "btn");
+  submit.type = "submit";
+  form.append(error, submit, button("Back to sign in", showLogin, "btn secondary"));
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+    submit.disabled = true;
+    try {
+      await api("/signup", "POST", {username: username.value, password: password.value});
+      showLogin();
+      toast("Account created. Sign in with your new credentials.");
+    } catch (err) {
+      error.textContent = err.message;
+    } finally {
+      submit.disabled = false;
+    }
+  });
   workspace.append(form);
 }
 async function renderOrders() {
