@@ -138,7 +138,7 @@ if os.environ.get("CAMPUS_MCP_CASE"):
 
     @mcp.tool()
     def deliver_decision(subject: str, draft: str) -> dict:
-        """Save a draft to this case owner's mock inbox; no recipient selector or external email exists."""
+        """Save a ledger-verified update to this case owner's mock inbox; no recipient selector or external email exists."""
         from app.storage import database, notify
         if len(subject) > 200 or len(draft) > 2000:
             raise ValueError("Email draft exceeds the allowed size")
@@ -147,8 +147,13 @@ if os.environ.get("CAMPUS_MCP_CASE"):
             existing = db.execute("SELECT id FROM messages WHERE case_id=? AND kind=?", (case["id"], "agent_decision:"+run_id)).fetchone()
             if not existing:
                 actual = db.execute("SELECT id,amount FROM refunds WHERE customer=? AND request_key=?", (case["customer"], "case:"+case["id"])).fetchone()
-                verified = f"Executed mock credit: {actual['amount']} cents; refund {actual['id']}." if actual else "No refund has executed for this case."
-                body = f"Verified system status: {verified}\n\nAgent draft: {subject}\n{draft}"
+                body = (
+                    "No refund has executed for this case."
+                    if actual is None
+                    else "Executed mock credit: {} cents; refund {}.".format(
+                        actual["amount"], actual["id"]
+                    )
+                )
                 notify(db, case, "agent_decision:"+run_id, body)
             return dict(status="saved_to_mock_inbox", case_id=case["id"], external_email_sent=False)
 
