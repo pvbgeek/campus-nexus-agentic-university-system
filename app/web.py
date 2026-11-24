@@ -41,8 +41,17 @@ async def browser_boundary(request, call_next):
     origin = request.headers.get("origin")
     if request.method not in ("GET", "HEAD", "OPTIONS") and origin:
         expected = f"{request.url.scheme}://{request.url.netloc}"
-        if origin != expected:
-            return Response("Cross-origin mutation blocked", status_code=403)
+        trusted_origins = {
+            value.strip()
+            for value in os.environ.get("CAMPUS_NEXUS_TRUSTED_ORIGINS", "").split(",")
+            if value.strip()
+        }
+        if origin != expected and origin not in trusted_origins:
+            return Response(
+                content=json.dumps({"detail": "Cross-origin mutation blocked"}),
+                status_code=403,
+                media_type="application/json",
+            )
     response = await call_next(request)
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["Referrer-Policy"] = "same-origin"
