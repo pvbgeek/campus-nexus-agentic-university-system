@@ -1,11 +1,12 @@
 """Create ignored, local-only demo identities. Never commit or share generated credentials."""
 from pathlib import Path
 import hashlib
+import os
 import json
 import secrets
 
 ROOT = Path(__file__).resolve().parents[1]
-DATA = ROOT / "data"
+DATA = Path(os.environ.get("CAMPUS_NEXUS_DATA", str(ROOT / "data"))).resolve()
 DATA.mkdir(exist_ok=True)
 config = DATA / "identities.json"
 if config.exists():

@@ -9,3 +9,7 @@
 app/**/__pycache__/
 app/**/*.pyc
 app/**/.env*
+!scripts/
+!scripts/build_policy_index.py
+!scripts/publish_policy.py
+!scripts/init_local.py
