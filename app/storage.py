@@ -30,6 +30,16 @@ def database(write=False):
 
 with database() as db:
     db.executescript("""
+
+        CREATE TABLE IF NOT EXISTS customer_profiles (
+            actor TEXT PRIMARY KEY, display_name TEXT NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS policy_drafts (
+            id TEXT PRIMARY KEY, title TEXT NOT NULL, content TEXT NOT NULL,
+            author TEXT NOT NULL, created TEXT NOT NULL,
+            status TEXT NOT NULL DEFAULT "pending",
+            reviewer TEXT, note TEXT, reviewed TEXT
+        );
         CREATE TABLE IF NOT EXISTS sessions (
             digest TEXT PRIMARY KEY, actor TEXT NOT NULL, role TEXT NOT NULL,
             csrf TEXT NOT NULL, expires REAL NOT NULL

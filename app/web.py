@@ -242,6 +242,76 @@ def logout(response: Response, user=Depends(identity)):
     return dict(status="signed_out")
 
 
+
+class ProfileUpdate(Body):
+    display_name: str = Field(min_length=1, max_length=80)
+
+
+class PolicyDraft(Body):
+    title: str = Field(min_length=1, max_length=120)
+    content: str = Field(min_length=1, max_length=12000)
+
+
+class PolicyReview(Body):
+    decision: str
+    note: str = Field(min_length=1, max_length=1000)
+
+
+@app.get("/api/profile")
+def profile(user=Depends(customer)):
+    with database() as db:
+        row = db.execute("SELECT display_name FROM customer_profiles WHERE actor=?",
+                         (user["actor"],)).fetchone()
+        return {"display_name": row[0] if row else ""}
+
+
+@app.put("/api/profile")
+def update_profile(body: ProfileUpdate, user=Depends(customer)):
+    name = body.display_name.strip()
+    if not name:
+        raise HTTPException(422, "Enter a display name")
+    with database(write=True) as db:
+        db.execute("INSERT INTO customer_profiles VALUES (?,?) ON CONFLICT(actor) "
+                   "DO UPDATE SET display_name=excluded.display_name", (user["actor"], name))
+    return {"display_name": name}
+
+
+@app.post("/api/staff/policy-drafts", status_code=201)
+def submit_policy_draft(body: PolicyDraft, user=Depends(staff)):
+    title, content = body.title.strip(), body.content.strip()
+    if not title or not content:
+        raise HTTPException(422, "Enter a title and policy text")
+    draft_id = str(uuid.uuid4())
+    with database(write=True) as db:
+        db.execute("INSERT INTO policy_drafts(id,title,content,author,created) VALUES (?,?,?,?,?)",
+                   (draft_id, title, content, user["actor"], now()))
+        audit(db, draft_id, "policy_draft_submitted", actor=user["actor"])
+    return {"id": draft_id, "status": "pending"}
+
+
+@app.get("/api/staff/policy-drafts")
+def list_policy_drafts(user=Depends(staff)):
+    with database() as db:
+        return [dict(row) for row in db.execute(
+            "SELECT * FROM policy_drafts ORDER BY created DESC LIMIT 50")]
+
+
+@app.post("/api/staff/policy-drafts/{draft_id}/review")
+def review_policy_draft(draft_id: str, body: PolicyReview, user=Depends(staff)):
+    if body.decision not in {"approved", "rejected"} or not body.note.strip():
+        raise HTTPException(422, "Choose a review decision and enter a note")
+    with database(write=True) as db:
+        row = db.execute("SELECT status FROM policy_drafts WHERE id=?", (draft_id,)).fetchone()
+        if row is None:
+            raise HTTPException(404, "Draft not found")
+        if row["status"] != "pending":
+            raise HTTPException(409, "Draft already reviewed")
+        db.execute("UPDATE policy_drafts SET status=?, reviewer=?, note=?, reviewed=? WHERE id=?",
+                   (body.decision, user["actor"], body.note.strip(), now(), draft_id))
+        audit(db, draft_id, "policy_draft_reviewed", actor=user["actor"], decision=body.decision)
+    return {"id": draft_id, "status": body.decision, "published": False}
+
+
 @app.get("/api/orders")
 def orders(user=Depends(customer)):
     with database() as db:

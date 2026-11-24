@@ -74,6 +74,7 @@ function showSignup() {
 async function renderOrders() {
   const data=await api("/orders");
   clear("My orders", "These synthetic records belong to your signed-in customer account.");
+  workspace.append(button("Edit profile", showProfile, "btn secondary"));
   workspace.append(node("p", "Mock account credits: "+money(data.account.balance)+" · "+data.account.destination,"notice"));
   for(const order of data.orders){const c=card("Order #"+order.id);
     c.append(node("p","Order total: "+money(order.total)+" · Remaining refundable: "+money(order.remaining_cents)));
@@ -141,9 +142,95 @@ async function addCaseDetails(container, id) {
     container.append(form);
   }
 }
+
+async function showProfile() {
+  const data = await api("/profile");
+  clear("My profile", "Edit the display name on your own account.");
+  const form = node("form", undefined, "panel");
+  const name = field(form, "Display name");
+  name.value = data.display_name;
+  name.maxLength = 80;
+  const save = node("button", "Save display name", "btn");
+  save.type = "submit";
+  const status = node("p");
+  status.setAttribute("role", "status");
+  form.append(save, button("Back to orders", renderOrders, "btn secondary"), status);
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+    save.disabled = true;
+    try {
+      const updated = await api("/profile", "PUT", {display_name: name.value});
+      name.value = updated.display_name;
+      status.textContent = "Display name saved.";
+    } catch (error) {
+      status.textContent = error.message;
+    } finally {
+      save.disabled = false;
+    }
+  });
+  workspace.append(form);
+}
+
+async function showPolicyDrafts() {
+  const endpoint = "/staff/policy-drafts";
+  const drafts = await api(endpoint);
+  clear("Policy drafts", "A review records a decision. It does not change the active refund policy.");
+  const form = node("form", undefined, "panel");
+  const title = field(form, "Draft title");
+  title.maxLength = 120;
+  const content = field(form, "Policy text", "textarea");
+  content.maxLength = 12000;
+  const submit = node("button", "Submit draft", "btn");
+  submit.type = "submit";
+  const status = node("p");
+  status.setAttribute("role", "status");
+  form.append(submit, button("Back to staff workspace", () => renderCases(true), "btn secondary"), status);
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+    submit.disabled = true;
+    try {
+      await api(endpoint, "POST", {title: title.value, content: content.value});
+      await showPolicyDrafts();
+      toast("Draft saved for review.");
+    } catch (error) {
+      status.textContent = error.message;
+    } finally {
+      submit.disabled = false;
+    }
+  });
+  workspace.append(form);
+  for (const draft of drafts) {
+    const panel = card(draft.title);
+    panel.append(node("p", "Status: " + draft.status), node("pre", draft.content, "support-json"));
+    if (draft.note) panel.append(node("p", "Review note: " + draft.note));
+    if (draft.status === "pending") {
+      const note = field(panel, "Review note", "textarea");
+      note.maxLength = 1000;
+      let reviewing = false;
+      const review = async decision => {
+        if (reviewing) return;
+        if (!note.value.trim()) throw new Error("Enter a review note.");
+        reviewing = true;
+        try {
+          await api(endpoint + "/" + encodeURIComponent(draft.id) + "/review",
+                    "POST", {decision, note: note.value});
+          await showPolicyDrafts();
+          toast("Review recorded. Active policy unchanged.");
+        } finally {
+          reviewing = false;
+        }
+      };
+      panel.append(button("Approve draft", () => review("approved")),
+                   button("Reject draft", () => review("rejected"), "btn secondary"));
+    }
+    workspace.append(panel);
+  }
+}
+
 async function renderCases(staff=false) {
   if(staff && user.role!=="staff")throw new Error("Staff access required.");
   const cases=await api("/cases");clear(staff?"Staff workspace":"My cases",staff?"Verify evidence, run the five Groq agents, or record a supervisor decision. The independent gateway rechecks limits at execution.":"View saved requests, decisions and mock inbox messages.");
+  if (staff) workspace.append(button("Policy drafts", showPolicyDrafts, "btn secondary"));
   if(!cases.length)workspace.append(node("p","No cases yet.","notice"));
   for(const c of cases){const panel=card("Case #"+c.id);
     panel.append(node("p","Order "+c.order_id+" · "+money(c.amount)+" · "+c.reason),node("p","Status: "+c.status+" · Reason: "+c.decision_reason,"notice"));
