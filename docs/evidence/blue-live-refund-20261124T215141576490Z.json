@@ -1,0 +1,20 @@
+{
+  "commit": "30bba1c31b44ad018b838cd99bb9af6ca81e997b",
+  "recorded_utc": "20261124T215141576490Z",
+  "scenario": "Normal synthetic $64 refund through the live Groq workflow",
+  "passed": true,
+  "last_http_status": 200,
+  "case_id": "NX-8DF42CA96E95",
+  "execution_status": "executed",
+  "completed_nodes": [
+    "Intake",
+    "Records",
+    "Refunds",
+    "Email",
+    "Reporting"
+  ],
+  "refund_id": "a1f72729-4d8e-4e1b-9a01-c1b06f68d9e6",
+  "executed_cents": 6400,
+  "inbox_message": "Executed mock credit: 6400 cents; refund a1f72729-4d8e-4e1b-9a01-c1b06f68d9e6.",
+  "staff_summary": "Executed mock credit: 6400 cents; refund a1f72729-4d8e-4e1b-9a01-c1b06f68d9e6."
+}
