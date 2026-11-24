@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "scope": "Local operator CLI with synthetic database fixtures and real vector retrieval",
+  "verified": [
+    "Pending draft refused without creating an index",
+    "Approved draft published and retrieved",
+    "Rejected draft refused without changing the active manifest",
+    "Only the approved publication was recorded in the audit log"
+  ],
+  "collection": "support_policy_a1b33299669b2f582b17"
+}
